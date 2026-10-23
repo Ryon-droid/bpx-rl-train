@@ -1,0 +1,21 @@
+<mujoco model="BPX flat ground">
+  <compiler angle="radian" autolimits="true" inertiafromgeom="false" fusestatic="false" alignfree="false"/>
+  <option timestep="0.005" gravity="0 0 -9.81" integrator="implicitfast" cone="elliptic" iterations="50"/>
+  <default>
+    <joint damping="0" frictionloss="0" armature="0.003"/>
+    <geom friction="1 0.005 0.0001" condim="3" solref="0.01 1" solimp="0.9 0.95 0.001"/>
+  </default>
+  <visual>
+    <global azimuth="135" elevation="-20"/>
+    <headlight diffuse="0.7 0.7 0.7" ambient="0.3 0.3 0.3"/>
+  </visual>
+  <asset>
+    <texture name="floor_texture" type="2d" builtin="checker" rgb1="0.2 0.25 0.3" rgb2="0.35 0.4 0.45" width="512" height="512"/>
+    <material name="floor_material" texture="floor_texture" texrepeat="5 5" texuniform="true" reflectance="0.1"/>
+    <material name="robot_material" rgba="0.65 0.7 0.75 1"/>
+  </asset>
+  <worldbody>
+    <light pos="0 -3 5" dir="0 0 -1" directional="true"/>
+    <geom name="ground" type="plane" size="0 0 0.1" material="floor_material"/>
+  </worldbody>
+</mujoco>

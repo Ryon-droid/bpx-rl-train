@@ -1,0 +1,2 @@
+# Optional simulator; use the existing BPX Python environment (torch, numpy).
+mujoco==3.3.7
