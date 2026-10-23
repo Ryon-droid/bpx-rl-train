@@ -293,6 +293,12 @@ Velocity tracking uses weights `+2.0` for XY velocity and `+1.0` for yaw rate. A
 
 Domain randomization covers friction, restitution, base mass and center of mass, initial pose and velocity, joint state, observation noise, and horizontal pushes.
 
+### Actuator calibration and standing posture plan
+
+The next calibration priorities are a measured joint-output torque–speed envelope and a standing-height comparison using sustained joint torque/current and temperature rise. The current fixed `30 Nm` limit and `0.48 m` flat-ground height target are simulation settings, not measured optima. Suspended tests characterize response and delay; a full capability envelope requires controlled loading or manufacturer data with stated operating conditions. Keep conventional domain randomization categories and choose ranges around measured behavior.
+
+See the [BPX actuator calibration and standing-posture plan (Chinese)](docs/bpx-actuator-calibration.zh-CN.md) for measurement, fitting, simulator integration and posture selection. This documentation update does not change training parameters or published models.
+
 ## 7. Train
 
 Run a small smoke test first:
