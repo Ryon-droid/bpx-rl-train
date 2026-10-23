@@ -1,0 +1,4 @@
+pretrained/**/*.pt binary
+pretrained/**/*.onnx binary
+# Preserve the original CSV reports and their CRLF line endings.
+pretrained/**/reports/**/*.csv -text whitespace=cr-at-eol

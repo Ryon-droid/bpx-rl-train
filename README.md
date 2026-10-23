@@ -8,20 +8,23 @@ This repository covers simulation training, evaluation, and policy export only. 
 
 ## Task and naming
 
-The project registers flat-ground and mixed-terrain tasks:
+The project registers flat-ground, mixed-terrain and dedicated stair tasks:
 
 | Name | Value | Meaning |
 |---|---|---|
 | Task ID | `bpx_flat` | Flat-ground omnidirectional velocity tracking |
 | Task ID | `bpx_rough` | Mixed flat ground, bumps, mild slopes and low stairs |
+| Task ID | `bpx_stairs` | Dedicated pyramid-stair locomotion |
 | Experiment name | `bpx_flat` | RSL-RL log directory under `logs/` |
 | Experiment name | `bpx_rough` | Default mixed-terrain log directory |
+| Experiment name | `bpx_stairs` | Dedicated stair log directory |
 | Run directory | `YYYY-MM-DD_HH-MM-SS[_run_name]` | One training run |
 | Checkpoint | `model_<iteration>.pt` | Saved RSL-RL checkpoint, for example `model_2999.pt` |
 | Exported policy | `bpx_flat_45.pt` / `bpx_flat_45.onnx` | TorchScript and ONNX actor exports |
 | Exported policy | `bpx_rough_45.pt` / `bpx_rough_45.onnx` | Mixed-terrain actor exports |
+| Exported policy | `bpx_stairs_45.pt` / `bpx_stairs_45.onnx` | Dedicated stair actor exports |
 
-The command target is body-frame velocity `[vx, vy, wz]` on flat or mild rough terrain. Both tasks share the 45-D Actor, 48-D Critic and 12-D action interface. There are no wheel joints, height scanners, history encoders, DWAQ/CENet modules, recurrent networks, or custom RL runners.
+The command target is body-frame velocity `[vx, vy, wz]` on flat ground, mild rough terrain or stairs. All three tasks share the 45-D Actor, 48-D Critic and 12-D action interface. There are no wheel joints, height scanners, history encoders, DWAQ/CENet modules, recurrent networks, or custom RL runners.
 
 ## 1. Requirements
 
@@ -47,7 +50,7 @@ git clone https://github.com/Ryon-droid/bpx-rl-train.git mirrorme_rl_train
 cd mirrorme_rl_train
 ```
 
-Training logs, checkpoints, exported policies, and caches are excluded from Git by `.gitignore`.
+Runtime logs and caches are excluded by `.gitignore`. Selected trained checkpoints, exported actors and their training configurations are committed under [`pretrained/`](pretrained/). A normal clone includes these files; Git LFS and separate model downloads are not required. For an existing checkout, run `git pull --ff-only` to get them.
 
 ### Automatic clean-environment setup
 
@@ -106,6 +109,66 @@ python -c "from importlib.metadata import version; import torch; print('Isaac La
 
 `CUDA available` must be `True` before GPU training.
 
+## Pretrained models: play and resume
+
+Two independent trained policies are included. Both used seed `2026`, `1024` parallel environments and `3000` training iterations; the final saved iteration is `2999`. Each bundle is approximately 4.6 MB.
+
+| Task | Original run | Checkpoint | Training configuration |
+|---|---|---|---|
+| Flat walking | `2026-10-02_16-11-56_baseline_v1` | [bpx_flat/model_2999.pt](pretrained/bpx_flat/model_2999.pt) | [Environment](pretrained/bpx_flat/params/env.yaml), [PPO](pretrained/bpx_flat/params/agent.yaml) |
+| Dedicated stairs | `2026-10-22_12-03-41_stairs_from_scratch` | [bpx_stairs/model_2999.pt](pretrained/bpx_stairs/model_2999.pt) | [Environment](pretrained/bpx_stairs/params/env.yaml), [PPO](pretrained/bpx_stairs/params/agent.yaml) |
+
+Each bundle contains the full RSL-RL checkpoint (model and optimizer state), `exported/` TorchScript and ONNX actors, `params/` configuration snapshots, and `reports/` historical evaluation JSON/CSV files. [manifest.json](pretrained/manifest.json) records original paths, byte sizes and SHA-256 hashes. Use `model_2999.pt` for Isaac playback and continued training; use the exported actor for inference or MuJoCo.
+
+The stair policy was trained from random initialization on the independent `bpx_stairs` task. Its terrain is 100% pyramid stairs with a configured step-height range of 2–10 cm, 30 cm treads and a 3 m central platform. Training command bounds are forward ±0.5 m/s, lateral ±0.2 m/s and yaw ±0.5 rad/s. The actor has no terrain height scan. The task implementation is [bpx_stairs_env_cfg.py](source/mirrorme_rl_train/mirrorme_rl_train/tasks/locomotion/bpx_stairs_env_cfg.py).
+
+After installing and activating `bpx_train`, run these commands from the repository root:
+
+```bash
+# Flat-ground playback
+./bpx.sh play --task bpx_flat \
+  --checkpoint pretrained/bpx_flat/model_2999.pt \
+  --device cpu --num_envs 1 --seed 2026 --real_time
+
+# Dedicated stair playback
+./bpx.sh play --task bpx_stairs \
+  --checkpoint pretrained/bpx_stairs/model_2999.pt \
+  --device cpu --num_envs 20 --seed 2026 --real_time
+```
+
+On a server without a display, replace `--real_time` with `--headless`; use `--device cuda:0` for GPU simulation/inference. Playback also exports the actor beside the checkpoint and may rewrite the bundled exports.
+
+Continue training either policy on a compatible GPU:
+
+```bash
+./bpx.sh train --task bpx_flat --resume \
+  --checkpoint pretrained/bpx_flat/model_2999.pt \
+  --num_envs 1024 --max_iterations 1000 --seed 2026 \
+  --run_name flat_resume --headless --device cuda:0
+
+./bpx.sh train --task bpx_stairs --resume \
+  --checkpoint pretrained/bpx_stairs/model_2999.pt \
+  --num_envs 1024 --max_iterations 1000 --seed 2026 \
+  --run_name stairs_resume --headless --device cuda:0
+```
+
+Here `--max_iterations 1000` requests 1000 additional training iterations. New checkpoints and configuration snapshots are written to a new run under `logs/<task>/`. Resume restores saved model/optimizer state and the iteration counter; it does not restore simulator state, terrain curriculum or random-number-generator state.
+
+The bundled YAML files are original archival snapshots, including historical absolute paths and Python-specific YAML tags. Train/play load the registered Python task/PPO configuration and command-line overrides; specifying a checkpoint does **not** automatically load its saved YAML. Compare these snapshots when changing settings or reproducing a run.
+
+### Included historical evaluations
+
+These reports came from the original runs; this publication did not rerun simulation. All used seed `2026` and one 100-second, ten-phase command cycle, with two seconds of tracking warmup after phase changes/resets.
+
+| Report | Environments | Conditions / initial terrain levels | Physical failures | Episode timeouts |
+|---|---:|---|---:|---:|
+| [Flat robust](pretrained/bpx_flat/reports/2026-10-07_14-51-37_721833_robust/summary.json) | 16 | Randomization + XY velocity kicks every 3–5 s | 0 | 80 |
+| [Stairs nominal](pretrained/bpx_stairs/reports/2026-10-22_12-57-06_201909_nominal/summary.json) | 20 | No disturbances; levels 0–1 | 14 | 90 |
+| [Stairs robust](pretrained/bpx_stairs/reports/2026-10-22_13-00-11_185805_robust/summary.json) | 20 | Randomization + kicks every 8–15 s; levels 0–1 | 52 | 83 |
+| [Stairs nominal, wider levels](pretrained/bpx_stairs/reports/2026-10-22_13-05-06_654630_nominal/summary.json) | 20 | No disturbances; levels 0–9 | 18 | 88 |
+
+Velocity kicks range up to ±0.6 m/s per XY axis. Playback freezes curriculum progression; the 0–9 evaluation samples initial levels across that range, rather than testing only level 9. The fixed command suite includes speeds outside the stair training bounds. Failures trigger resets and timeouts are normal episode endings, so these counts are not stair-traversal success rates. The stair checkpoint still has failures under the recorded conditions. See each report's adjacent `phases.csv` for tracking errors and per-phase statistics. The MuJoCo scene below is flat and does not evaluate stair traversal.
+
 ## 3. Verify the project
 
 Check task registration without starting the simulator:
@@ -119,6 +182,7 @@ Expected output:
 ```text
 bpx_flat
 bpx_rough
+bpx_stairs
 ```
 
 Then launch one headless environment and validate the training interface:
@@ -138,6 +202,7 @@ A successful check verifies 45 Actor observations, 48 Critic observations, 12 ac
 ```text
 mirrorme_rl_train/
 ├── bpx.sh                         # command entry point
+├── pretrained/                    # published flat/stair models, configs and reports
 ├── resources/
 │   ├── mirrorme.py                # BPX articulation configuration
 │   └── BPX/                       # bundled robot URDF and mesh assets
@@ -151,6 +216,7 @@ mirrorme_rl_train/
     └── mirrorme_rl_train/tasks/locomotion/
         ├── bpx_flat_env_cfg.py
         ├── bpx_rough_env_cfg.py
+        ├── bpx_stairs_env_cfg.py
         ├── agents/rsl_rl_ppo_cfg.py
         └── mdp/rewards.py
 ```
@@ -305,7 +371,7 @@ Normal playback disables observation noise, friction/mass/COM randomization and 
 
 ```bash
 ./bpx.sh play \
-  --checkpoint logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/model_2999.pt \
+  --checkpoint pretrained/bpx_flat/model_2999.pt \
   --eval --robust --num_envs 16 --eval_cycles 1 --real_time
 ```
 
@@ -338,7 +404,7 @@ Install the optional simulator into the existing BPX Python environment:
 ```bash
 python -m pip install -r requirements-mujoco.txt
 ./bpx.sh mujoco \
-  --policy logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/exported/bpx_flat_45.pt \
+  --policy pretrained/bpx_flat/exported/bpx_flat_45.pt \
   --command 0.7 0 0 --duration 60
 ```
 
@@ -348,7 +414,7 @@ Run the shared ten-phase schedule with world XY velocity kicks:
 
 ```bash
 ./bpx.sh mujoco \
-  --policy logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/exported/bpx_flat_45.pt \
+  --policy pretrained/bpx_flat/exported/bpx_flat_45.pt \
   --eval --eval_cycles 1 --push_interval_s 3 5 --push_velocity 0.6
 ```
 

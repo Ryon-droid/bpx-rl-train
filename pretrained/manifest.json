@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "interface": {
+    "actor_observations": 45,
+    "critic_observations": 48,
+    "actions": 12,
+    "policy_hz": 50,
+    "physics_hz": 200
+  },
+  "models": {
+    "bpx_flat": {
+      "task": "bpx_flat",
+      "source_run": "logs/bpx_flat/2026-10-02_16-11-56_baseline_v1",
+      "checkpoint_iteration": 2999,
+      "training_iterations": 3000,
+      "seed": 2026,
+      "num_training_envs": 1024,
+      "files": [
+        {
+          "path": "pretrained/bpx_flat/model_2999.pt",
+          "source": "logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/model_2999.pt",
+          "bytes": 3640117,
+          "sha256": "f78c55e1c329b56c09727f1346f440cf30c54ae62f4bae749137b56a3768fdf8"
+        },
+        {
+          "path": "pretrained/bpx_flat/exported/bpx_flat_45.pt",
+          "source": "logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/exported/bpx_flat_45.pt",
+          "bytes": 460899,
+          "sha256": "ec756b2722c6b47f5db95fbe04c6d43723b34c7276417c90b6c2b18cc9faf5f4"
+        },
+        {
+          "path": "pretrained/bpx_flat/exported/bpx_flat_45.onnx",
+          "source": "logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/exported/bpx_flat_45.onnx",
+          "bytes": 449301,
+          "sha256": "dbd0ffc69170df8a584965ded101dd2f3c8b0860917312be61628d5860516abd"
+        },
+        {
+          "path": "pretrained/bpx_flat/params/agent.yaml",
+          "source": "logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/params/agent.yaml",
+          "bytes": 1024,
+          "sha256": "5a047fd02cfc1767fd96bce70f263f7c7401bb512735aa29548aed0b69626cf8"
+        },
+        {
+          "path": "pretrained/bpx_flat/params/env.yaml",
+          "source": "logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/params/env.yaml",
+          "bytes": 37224,
+          "sha256": "94f8e575e0c6cc06f5d9bc2abc7c665089ec788309be64eb4f19b34a5b8e27ef"
+        },
+        {
+          "path": "pretrained/bpx_flat/reports/2026-10-07_14-51-37_721833_robust/summary.json",
+          "source": "logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/evaluations/2026-10-07_14-51-37_721833_robust/summary.json",
+          "bytes": 12605,
+          "sha256": "be7381b572b68ea3515ea2d6900338bf3ef4b11b4450f07b9e31a8f12198d9a9"
+        },
+        {
+          "path": "pretrained/bpx_flat/reports/2026-10-07_14-51-37_721833_robust/phases.csv",
+          "source": "logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/evaluations/2026-10-07_14-51-37_721833_robust/phases.csv",
+          "bytes": 3190,
+          "sha256": "53dd290e77d78db80677d97ff105080925081a2289d1e1f15457473ff79b806d"
+        }
+      ]
+    },
+    "bpx_stairs": {
+      "task": "bpx_stairs",
+      "source_run": "logs/bpx_stairs/2026-10-22_12-03-41_stairs_from_scratch",
+      "checkpoint_iteration": 2999,
+      "training_iterations": 3000,
+      "seed": 2026,
+      "num_training_envs": 1024,
+      "files": [
+        {
+          "path": "pretrained/bpx_stairs/model_2999.pt",
+          "source": "logs/bpx_stairs/2026-10-22_12-03-41_stairs_from_scratch/model_2999.pt",
+          "bytes": 3640117,
+          "sha256": "b57aaef9b85d57899c9ad00a434b45950d62758d1fc19ea41255aa128318f2aa"
+        },
+        {
+          "path": "pretrained/bpx_stairs/exported/bpx_stairs_45.pt",
+          "source": "logs/bpx_stairs/2026-10-22_12-03-41_stairs_from_scratch/exported/bpx_stairs_45.pt",
+          "bytes": 461021,
+          "sha256": "a31752758ba31b3513451585d626f584afc2bf4e83dc15476f3459e3b25d74f1"
+        },
+        {
+          "path": "pretrained/bpx_stairs/exported/bpx_stairs_45.onnx",
+          "source": "logs/bpx_stairs/2026-10-22_12-03-41_stairs_from_scratch/exported/bpx_stairs_45.onnx",
+          "bytes": 449301,
+          "sha256": "3145377803fde4da98376e350c7fd44b9d46b27c9e2aefa602adb8f264c89a2b"
+        },
+        {
+          "path": "pretrained/bpx_stairs/params/agent.yaml",
+          "source": "logs/bpx_stairs/2026-10-22_12-03-41_stairs_from_scratch/params/agent.yaml",
+          "bytes": 1034,
+          "sha256": "bb31e2932cebae5c94d146d3bdd22868f1fa574e7ded77521968866874e85847"
+        },
+        {
+          "path": "pretrained/bpx_stairs/params/env.yaml",
+          "source": "logs/bpx_stairs/2026-10-22_12-03-41_stairs_from_scratch/params/env.yaml",
+          "bytes": 36516,
+          "sha256": "652bb987fc0cb49b1328df0f124d665141d2757092f5f3c5c74c328ecee7928f"
+        },
+        {
+          "path": "pretrained/bpx_stairs/reports/2026-10-22_12-57-06_201909_nominal/summary.json",
+          "source": "logs/bpx_stairs/2026-10-22_12-03-41_stairs_from_scratch/evaluations/2026-10-22_12-57-06_201909_nominal/summary.json",
+          "bytes": 11567,
+          "sha256": "07c63059bc547652cbcc58ee35c65be10c5f955679133b2784c3a708929cd68d"
+        },
+        {
+          "path": "pretrained/bpx_stairs/reports/2026-10-22_12-57-06_201909_nominal/phases.csv",
+          "source": "logs/bpx_stairs/2026-10-22_12-03-41_stairs_from_scratch/evaluations/2026-10-22_12-57-06_201909_nominal/phases.csv",
+          "bytes": 3300,
+          "sha256": "dc0d809c1ade3e130a441efa143ed95c9756ae8993a46b94f99a0dfdfc43d32d"
+        },
+        {
+          "path": "pretrained/bpx_stairs/reports/2026-10-22_13-00-11_185805_robust/summary.json",
+          "source": "logs/bpx_stairs/2026-10-22_12-03-41_stairs_from_scratch/evaluations/2026-10-22_13-00-11_185805_robust/summary.json",
+          "bytes": 12817,
+          "sha256": "8525fa6321cd87d3c59bb9f715cc2465a465e9a63473698c9b231b90b0585d4a"
+        },
+        {
+          "path": "pretrained/bpx_stairs/reports/2026-10-22_13-00-11_185805_robust/phases.csv",
+          "source": "logs/bpx_stairs/2026-10-22_12-03-41_stairs_from_scratch/evaluations/2026-10-22_13-00-11_185805_robust/phases.csv",
+          "bytes": 3281,
+          "sha256": "ae17de6afd29ccad6a95c7252210f242cd36fece65ca649922a3492ea3ae508c"
+        },
+        {
+          "path": "pretrained/bpx_stairs/reports/2026-10-22_13-05-06_654630_nominal/summary.json",
+          "source": "logs/bpx_stairs/2026-10-22_12-03-41_stairs_from_scratch/evaluations/2026-10-22_13-05-06_654630_nominal/summary.json",
+          "bytes": 11556,
+          "sha256": "3f9c0976c2a38e6d2bf4ef6e98a5610631ea99dab1353e232fce75ea35208636"
+        },
+        {
+          "path": "pretrained/bpx_stairs/reports/2026-10-22_13-05-06_654630_nominal/phases.csv",
+          "source": "logs/bpx_stairs/2026-10-22_12-03-41_stairs_from_scratch/evaluations/2026-10-22_13-05-06_654630_nominal/phases.csv",
+          "bytes": 3277,
+          "sha256": "a0e2709c384ec9d18e294512663bd4bb110fc13001fa08c2bb65da6bbc0d3615"
+        }
+      ]
+    }
+  }
+}

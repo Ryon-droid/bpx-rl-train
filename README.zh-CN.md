@@ -8,20 +8,23 @@
 
 ## 任务与命名
 
-工程注册平地和多地形两个任务：
+工程注册平地、多地形和独立台阶三个任务：
 
 | 名称 | 值 | 含义 |
 |---|---|---|
 | 任务 ID | `bpx_flat` | 平地全向速度跟踪任务 |
 | 任务 ID | `bpx_rough` | 平地、起伏、缓坡和低台阶混合训练 |
+| 任务 ID | `bpx_stairs` | 独立的金字塔台阶行走任务 |
 | 实验名称 | `bpx_flat` | `logs/` 下的 RSL-RL 日志目录名 |
 | 实验名称 | `bpx_rough` | 多地形任务的默认日志目录名 |
+| 实验名称 | `bpx_stairs` | 独立台阶任务的日志目录名 |
 | 运行目录 | `YYYY-MM-DD_HH-MM-SS[_run_name]` | 一次独立训练 |
 | 检查点 | `model_<iteration>.pt` | RSL-RL 保存的模型，例如 `model_2999.pt` |
 | 导出模型 | `bpx_flat_45.pt` / `bpx_flat_45.onnx` | TorchScript 和 ONNX Actor |
 | 导出模型 | `bpx_rough_45.pt` / `bpx_rough_45.onnx` | 多地形任务的 Actor 导出 |
+| 导出模型 | `bpx_stairs_45.pt` / `bpx_stairs_45.onnx` | 独立台阶任务的 Actor 导出 |
 
-策略跟踪机身坐标系速度指令 `[vx, vy, wz]`，支持平地和轻度复杂地形。两个任务共用 45 维 Actor、48 维 Critic 和 12 维动作接口。任务中没有轮关节、高度扫描器、历史编码器、DWAQ/CENet 模块、循环网络或自定义 RL Runner。
+策略跟踪机身坐标系速度指令 `[vx, vy, wz]`，支持平地、轻度复杂地形和台阶。三个任务共用 45 维 Actor、48 维 Critic 和 12 维动作接口。任务中没有轮关节、高度扫描器、历史编码器、DWAQ/CENet 模块、循环网络或自定义 RL Runner。
 
 ## 1. 环境要求
 
@@ -47,7 +50,7 @@ git clone https://github.com/Ryon-droid/bpx-rl-train.git mirrorme_rl_train
 cd mirrorme_rl_train
 ```
 
-训练日志、模型检查点、导出策略和缓存按 `.gitignore` 排除，不上传到 Git。
+运行日志和缓存按 `.gitignore` 排除。已选定的训练检查点、导出策略及训练配置保存在 [`pretrained/`](pretrained/)，普通克隆即可获取，不需要 Git LFS 或额外下载模型。已有仓库执行 `git pull --ff-only` 即可更新。
 
 ### 自动创建干净环境
 
@@ -106,6 +109,66 @@ python -c "from importlib.metadata import version; import torch; print('Isaac La
 
 开始 GPU 训练前，`CUDA available` 必须为 `True`。
 
+## 预训练模型：播放与继续训练
+
+仓库包含两套独立训练的策略。两者均使用随机种子 `2026`、`1024` 个并行环境，训练 `3000` 次迭代，最终保存的迭代编号为 `2999`。每套模型及配套文件约 4.6 MB。
+
+| 任务 | 原始训练运行 | 检查点 | 训练配置 |
+|---|---|---|---|
+| 平地行走 | `2026-10-02_16-11-56_baseline_v1` | [bpx_flat/model_2999.pt](pretrained/bpx_flat/model_2999.pt) | [环境配置](pretrained/bpx_flat/params/env.yaml)、[PPO 配置](pretrained/bpx_flat/params/agent.yaml) |
+| 独立台阶 | `2026-10-22_12-03-41_stairs_from_scratch` | [bpx_stairs/model_2999.pt](pretrained/bpx_stairs/model_2999.pt) | [环境配置](pretrained/bpx_stairs/params/env.yaml)、[PPO 配置](pretrained/bpx_stairs/params/agent.yaml) |
+
+每套包含完整 RSL-RL 检查点（模型与优化器状态）、`exported/` 下的 TorchScript 和 ONNX Actor、`params/` 下的配置快照，以及 `reports/` 下的历史评估 JSON/CSV。[manifest.json](pretrained/manifest.json) 记录原始路径、文件大小和 SHA-256 校验值。Isaac 播放与续训使用 `model_2999.pt`，推理或 MuJoCo 使用导出的 Actor。
+
+台阶策略在独立的 `bpx_stairs` 任务中从随机初始化开始训练。地形为 100% 金字塔台阶，配置台阶高度范围 2～10 cm、踏面宽 30 cm、中央平台宽 3 m；训练速度范围为前后 ±0.5 m/s、横向 ±0.2 m/s、转向 ±0.5 rad/s。Actor 不含地形高度扫描输入。对应任务代码为 [bpx_stairs_env_cfg.py](source/mirrorme_rl_train/mirrorme_rl_train/tasks/locomotion/bpx_stairs_env_cfg.py)。
+
+完成安装并激活 `bpx_train` 后，在仓库根目录执行：
+
+```bash
+# 平地模型播放
+./bpx.sh play --task bpx_flat \
+  --checkpoint pretrained/bpx_flat/model_2999.pt \
+  --device cpu --num_envs 1 --seed 2026 --real_time
+
+# 独立台阶模型播放
+./bpx.sh play --task bpx_stairs \
+  --checkpoint pretrained/bpx_stairs/model_2999.pt \
+  --device cpu --num_envs 20 --seed 2026 --real_time
+```
+
+没有桌面显示的服务器，将 `--real_time` 换成 `--headless`；使用 GPU 仿真/推理时将设备改为 `--device cuda:0`。播放脚本也会在检查点旁导出 Actor，可能重写随仓库提供的导出文件。
+
+在兼容的 GPU 上继续训练：
+
+```bash
+./bpx.sh train --task bpx_flat --resume \
+  --checkpoint pretrained/bpx_flat/model_2999.pt \
+  --num_envs 1024 --max_iterations 1000 --seed 2026 \
+  --run_name flat_resume --headless --device cuda:0
+
+./bpx.sh train --task bpx_stairs --resume \
+  --checkpoint pretrained/bpx_stairs/model_2999.pt \
+  --num_envs 1024 --max_iterations 1000 --seed 2026 \
+  --run_name stairs_resume --headless --device cuda:0
+```
+
+这里的 `--max_iterations 1000` 表示额外训练 1000 次迭代。新的模型和配置快照保存在 `logs/<任务名>/` 下的新运行目录中。续训恢复模型、优化器状态和迭代计数，不恢复仿真状态、地形课程进度或随机数生成器状态。
+
+随附 YAML 是当次训练的原始配置存档，保留历史绝对路径和 Python 专用 YAML 标签。训练/播放实际加载注册的 Python 任务与 PPO 配置及命令行覆盖项；指定检查点**不会自动加载**旁边的 YAML。修改配置或复现训练时，请对照这两份快照。
+
+### 随附的历史评估结果
+
+以下报告来自原训练记录，本次上传没有重新运行仿真。均使用种子 `2026`，运行一轮十阶段指令序列，共 100 秒；跟踪统计排除阶段切换/重置后的前 2 秒。
+
+| 报告 | 环境数量 | 条件 / 初始地形等级 | 物理失败次数 | Episode 超时次数 |
+|---|---:|---|---:|---:|
+| [平地带扰动](pretrained/bpx_flat/reports/2026-10-07_14-51-37_721833_robust/summary.json) | 16 | 随机化 + 每 3～5 秒 XY 速度推扰 | 0 | 80 |
+| [台阶标称条件](pretrained/bpx_stairs/reports/2026-10-22_12-57-06_201909_nominal/summary.json) | 20 | 无扰动；等级 0～1 | 14 | 90 |
+| [台阶带扰动](pretrained/bpx_stairs/reports/2026-10-22_13-00-11_185805_robust/summary.json) | 20 | 随机化 + 每 8～15 秒推扰；等级 0～1 | 52 | 83 |
+| [台阶较宽等级范围](pretrained/bpx_stairs/reports/2026-10-22_13-05-06_654630_nominal/summary.json) | 20 | 无扰动；等级 0～9 | 18 | 88 |
+
+推扰幅度为 XY 每轴最多 ±0.6 m/s。播放冻结课程升级/降级；0～9 的评估是在该范围采样初始等级，并非全部使用等级 9。固定评估序列含超出台阶训练范围的速度。失败后会自动重置，超时是正常回合结束，因此这些计数不能视为台阶通过率；台阶模型在这些记录条件下仍有失败。各报告旁的 `phases.csv` 保存跟踪误差和分阶段统计。下文 MuJoCo 场景为平地，不能用于验证台阶通过能力。
+
 ## 3. 验证工程
 
 不启动仿真器，先检查任务注册：
@@ -119,6 +182,7 @@ python scripts/list_envs.py
 ```text
 bpx_flat
 bpx_rough
+bpx_stairs
 ```
 
 随后启动一个无界面环境并验证训练接口：
@@ -138,6 +202,7 @@ bpx_rough
 ```text
 mirrorme_rl_train/
 ├── bpx.sh                         # 统一命令入口
+├── pretrained/                    # 已发布的平地/台阶模型、配置与评估报告
 ├── resources/
 │   ├── mirrorme.py                # BPX Articulation 配置
 │   └── BPX/                       # 随仓库提供的机器人 URDF 和网格资源
@@ -151,6 +216,7 @@ mirrorme_rl_train/
     └── mirrorme_rl_train/tasks/locomotion/
         ├── bpx_flat_env_cfg.py
         ├── bpx_rough_env_cfg.py
+        ├── bpx_stairs_env_cfg.py
         ├── agents/rsl_rl_ppo_cfg.py
         └── mdp/rewards.py
 ```
@@ -305,7 +371,7 @@ tensorboard --logdir logs/bpx_flat
 
 ```bash
 ./bpx.sh play \
-  --checkpoint logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/model_2999.pt \
+  --checkpoint pretrained/bpx_flat/model_2999.pt \
   --eval --robust --num_envs 16 --eval_cycles 1 --real_time
 ```
 
@@ -315,7 +381,7 @@ tensorboard --logdir logs/bpx_flat
 
 ```bash
 ./bpx.sh play \
-  --checkpoint logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/model_2999.pt \
+  --checkpoint pretrained/bpx_flat/model_2999.pt \
   --eval --robust --num_envs 16 --eval_cycles 1 \
   --push_interval_s 3 5 --push_velocity 0.6 --real_time
 ```
@@ -347,7 +413,7 @@ export LD_LIBRARY_PATH="$CONDA_PREFIX/lib/python3.11/site-packages/torch/lib:$CO
 ```bash
 python -m pip install -r requirements-mujoco.txt
 ./bpx.sh mujoco \
-  --policy logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/exported/bpx_flat_45.pt \
+  --policy pretrained/bpx_flat/exported/bpx_flat_45.pt \
   --command 0.7 0 0 --duration 60
 ```
 
@@ -357,7 +423,7 @@ python -m pip install -r requirements-mujoco.txt
 
 ```bash
 ./bpx.sh mujoco \
-  --policy logs/bpx_flat/2026-10-02_16-11-56_baseline_v1/exported/bpx_flat_45.pt \
+  --policy pretrained/bpx_flat/exported/bpx_flat_45.pt \
   --eval --eval_cycles 1 --push_interval_s 3 5 --push_velocity 0.6
 ```
 

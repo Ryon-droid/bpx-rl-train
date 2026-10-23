@@ -1,0 +1,3 @@
+# Keep historical reports in reports/; ignore reports generated during playback.
+**/evaluations/
+**/mujoco_evaluations/
