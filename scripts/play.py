@@ -62,18 +62,18 @@ simulation_app = app_launcher.app
 
 import gymnasium as gym
 import torch
-from rsl_rl.runners import OnPolicyRunner
 from isaaclab.envs import ManagerBasedRLEnvCfg
 from isaaclab.envs.mdp.commands import UniformVelocityCommand
 from isaaclab.managers import TerminationTermCfg
 from isaaclab.utils.assets import retrieve_file_path
-from isaaclab_rl.rsl_rl import RslRlOnPolicyRunnerCfg, RslRlVecEnvWrapper, export_policy_as_jit, export_policy_as_onnx
+from isaaclab_rl.rsl_rl import RslRlOnPolicyRunnerCfg, RslRlVecEnvWrapper
 import isaaclab_tasks  # noqa: F401
 from isaaclab_tasks.utils import get_checkpoint_path
 from isaaclab_tasks.utils.hydra import hydra_task_config
 import mirrorme_rl_train.tasks  # noqa: F401
 from mirrorme_rl_train.tasks.locomotion.bpx_flat_env_cfg import FOOT_BODY_NAMES, JOINT_NAMES
 from play_evaluation import EVALUATION_PHASES, PlayEvaluator, record_evaluation_metrics
+from runner_utils import export_runner_policy, load_runner_checkpoint, make_runner
 
 
 class EvaluationVelocityCommand(UniformVelocityCommand):
@@ -93,21 +93,6 @@ class EvaluationVelocityCommand(UniformVelocityCommand):
         self._resample_command(slice(None))
 
 
-def export_policy(runner: OnPolicyRunner, export_dir: str) -> None:
-    try:
-        policy_nn = runner.alg.policy
-    except AttributeError:
-        policy_nn = runner.alg.actor_critic
-    if hasattr(policy_nn, "actor_obs_normalizer"):
-        normalizer = policy_nn.actor_obs_normalizer
-    elif hasattr(policy_nn, "student_obs_normalizer"):
-        normalizer = policy_nn.student_obs_normalizer
-    else:
-        normalizer = None
-    export_policy_as_jit(policy_nn, normalizer=normalizer, path=export_dir, filename=f"{args_cli.task}_45.pt")
-    export_policy_as_onnx(policy_nn, normalizer=normalizer, path=export_dir, filename=f"{args_cli.task}_45.onnx")
-
-
 @hydra_task_config(args_cli.task, args_cli.agent)
 def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
     agent_cfg = cli_args.update_rsl_rl_cfg(agent_cfg, args_cli)
@@ -118,6 +103,8 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
         env_cfg.curriculum.terrain_levels = None
     if not args_cli.robust:
         env_cfg.observations.policy.enable_corruption = False
+        if hasattr(env_cfg.observations, "proprio_history"):
+            env_cfg.observations.proprio_history.enable_corruption = False
         env_cfg.events.physics_material = None
         env_cfg.events.add_base_mass = None
         env_cfg.events.base_com = None
@@ -162,12 +149,12 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
             disable_logger=True,
         )
     env = RslRlVecEnvWrapper(env, clip_actions=agent_cfg.clip_actions)
-    runner = OnPolicyRunner(env, agent_cfg.to_dict(), log_dir=None, device=agent_cfg.device)
+    runner = make_runner(env, agent_cfg)
     print(f"[INFO] Loading checkpoint: {checkpoint}")
-    runner.load(checkpoint)
+    load_runner_checkpoint(runner, checkpoint, load_optimizer=False)
     policy = runner.get_inference_policy(device=env.unwrapped.device)
     export_dir = os.path.join(log_dir, "exported")
-    export_policy(runner, export_dir)
+    export_runner_policy(runner, args_cli.task, export_dir)
     print(f"[INFO] Exported to: {export_dir}")
 
     dt = env.unwrapped.step_dt

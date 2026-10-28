@@ -6,6 +6,8 @@
 
 本仓库只包含仿真训练、策略评估和模型导出，不包含机器人 SDK 接入或实机部署内容。
 
+新增可选的“训练带地形特权信息、部署无相机”两阶段任务：`bpx_rough_teacher` / `bpx_stairs_teacher` 训练教师，`bpx_rough_blind` / `bpx_stairs_blind` 蒸馏 20 帧本体历史学生。完整命令、论文区别与 900 维部署接口见[特权教师与盲学生训练](docs/bpx-privileged-blind-training.zh-CN.md)。以下原有三个任务的 45 维接口说明继续适用。
+
 ## 任务与命名
 
 工程注册平地、多地形和独立台阶三个任务：

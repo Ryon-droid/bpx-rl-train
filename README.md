@@ -6,6 +6,8 @@ An open reinforcement-learning training baseline for the MIRRORME BPX quadruped.
 
 This repository covers simulation training, evaluation, and policy export only. Robot SDK integration and physical-robot deployment are intentionally out of scope.
 
+Optional privileged-teacher / blind-student tasks are also available: train `bpx_rough_teacher` or `bpx_stairs_teacher` with simulated terrain, then distill `bpx_rough_blind` or `bpx_stairs_blind` using 20 proprioceptive frames. See the [training and deployment-interface guide (Chinese)](docs/bpx-privileged-blind-training.zh-CN.md). The original three tasks retain the 45-D interface described below.
+
 ## Task and naming
 
 The project registers flat-ground, mixed-terrain and dedicated stair tasks:

@@ -34,3 +34,20 @@ gym.register(
         "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:BPXStairsPPORunnerCfg",
     },
 )
+
+
+for task_id, env_class, runner_class in (
+    ("bpx_rough_teacher", "BPXRoughTeacherEnvCfg", "BPXRoughTeacherPPORunnerCfg"),
+    ("bpx_stairs_teacher", "BPXStairsTeacherEnvCfg", "BPXStairsTeacherPPORunnerCfg"),
+    ("bpx_rough_blind", "BPXRoughBlindEnvCfg", "BPXRoughBlindDistillationRunnerCfg"),
+    ("bpx_stairs_blind", "BPXStairsBlindEnvCfg", "BPXStairsBlindDistillationRunnerCfg"),
+):
+    gym.register(
+        id=task_id,
+        entry_point="isaaclab.envs:ManagerBasedRLEnv",
+        disable_env_checker=True,
+        kwargs={
+            "env_cfg_entry_point": f"{__name__}.bpx_privileged_env_cfg:{env_class}",
+            "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:{runner_class}",
+        },
+    )

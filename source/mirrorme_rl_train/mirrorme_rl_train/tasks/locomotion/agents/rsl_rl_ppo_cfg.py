@@ -57,3 +57,61 @@ class BPXStairsPPORunnerCfg(BPXRoughPPORunnerCfg):
     """Use a dedicated log directory for stair-focused training."""
 
     experiment_name = "bpx_stairs"
+
+
+@configclass
+class BPXRoughTeacherPPORunnerCfg(BPXFlatPPORunnerCfg):
+    """PPO teacher: both actor and critic see simulated terrain and velocity."""
+
+    experiment_name = "bpx_rough_teacher"
+    obs_groups = {
+        "policy": ["policy", "privileged", "terrain"],
+        "critic": ["policy", "privileged", "terrain"],
+    }
+
+
+@configclass
+class BPXStairsTeacherPPORunnerCfg(BPXRoughTeacherPPORunnerCfg):
+    experiment_name = "bpx_stairs_teacher"
+
+
+@configclass
+class BPXRoughBlindDistillationRunnerCfg(BPXFlatPPORunnerCfg):
+    """Official RSL-RL 3.0.1 DAgger-style distillation with a history MLP.
+
+    Isaac Lab 2.3.0 has no distillation config dataclasses, so pass the
+    native RSL-RL policy/algorithm dictionaries through the existing runner.
+    This is an action-imitation baseline, not the paper's TCN/latent loss.
+    """
+
+    class_name = "DistillationRunner"
+    experiment_name = "bpx_rough_blind"
+    obs_groups = {
+        "policy": ["proprio_history"],
+        "teacher": ["policy", "privileged", "terrain"],
+    }
+    policy: dict = {
+        "class_name": "StudentTeacher",
+        "init_noise_std": 0.1,
+        "noise_std_type": "scalar",
+        "student_obs_normalization": False,
+        "teacher_obs_normalization": False,
+        "student_hidden_dims": [512, 256, 128],
+        "teacher_hidden_dims": [256, 256, 128],
+        "activation": "elu",
+    }
+    algorithm: dict = {
+        "class_name": "Distillation",
+        "num_learning_epochs": 5,
+        # Feed-forward history MLP: update every stored step, no RNN BPTT.
+        "gradient_length": 1,
+        "learning_rate": 1.0e-4,
+        "max_grad_norm": 1.0,
+        "loss_type": "mse",
+        "optimizer": "adam",
+    }
+
+
+@configclass
+class BPXStairsBlindDistillationRunnerCfg(BPXRoughBlindDistillationRunnerCfg):
+    experiment_name = "bpx_stairs_blind"

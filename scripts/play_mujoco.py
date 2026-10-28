@@ -1,4 +1,4 @@
-"""CPU MuJoCo sim-to-sim playback of the exported BPX 45-D TorchScript actor."""
+"""CPU MuJoCo playback of BPX single-frame or blind-history TorchScript actors."""
 
 from __future__ import annotations
 
@@ -17,6 +17,7 @@ import torch
 
 from mujoco_bpx import BPXSimulation, KP, KD, TORQUE_LIMIT
 from play_evaluation import EVALUATION_PHASES
+from policy_contract import ProprioHistory
 
 
 class PhaseMetrics:
@@ -62,7 +63,9 @@ class PhaseMetrics:
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--policy", type=Path, required=True, help="Exported bpx_flat_45.pt, NOT model_2999.pt")
+    parser.add_argument("--policy", type=Path, required=True, help="Exported *_45.pt or *_blind_900.pt, not model_<iteration>.pt")
+    parser.add_argument("--history_length", type=int, default=1, choices=(1, 20),
+                        help="Use 20 for exported *_blind_900.pt, 1 for the original 45-D actor.")
     parser.add_argument("--command", type=float, nargs=3, default=(0.7, 0.0, 0.0), metavar=("VX", "VY", "WZ"))
     parser.add_argument("--duration", type=float, default=60.0, help="Simulation seconds for constant-command playback")
     parser.add_argument("--headless", action="store_true")
@@ -98,14 +101,19 @@ def parse_args():
 
 def run(args):
     torch.set_num_threads(1)
+    history_length = args.history_length
+    history = ProprioHistory(history_length)
+    input_dim = 45 * history_length
     try:
         policy = torch.jit.load(str(args.policy), map_location="cpu").eval()
         with torch.inference_mode():
-            probe = policy(torch.zeros(1, 45))
+            probe = policy(torch.zeros(1, input_dim))
         if probe.shape != (1, 12) or not torch.isfinite(probe).all():
-            raise ValueError("Expected finite [1, 12] output for [1, 45] input")
+            raise ValueError(f"Expected finite [1, 12] output for [1, {input_dim}] input")
     except Exception as exc:
-        raise RuntimeError("Load the exported TorchScript bpx_flat_45.pt; first export RSL-RL checkpoints with bpx.sh export") from exc
+        raise RuntimeError("Load an exported TorchScript actor; *_blind_900.pt requires --history_length 20") from exc
+    if hasattr(policy, "reset"):
+        policy.reset()
     sim = BPXSimulation(args.urdf, args.friction)
     dt = sim.control_dt
     schedule = [(cycle, name, command, args.eval_phase_s)
@@ -125,6 +133,7 @@ def run(args):
 
     def reset():
         sim.reset()
+        history.reset()
         if hasattr(policy, "reset"):
             policy.reset()
 
@@ -195,7 +204,8 @@ def run(args):
                     push()
                     next_push = global_step * dt + rng.uniform(*args.push_interval_s)
                 with torch.inference_mode():
-                    action = policy(torch.from_numpy(sim.observation(active.command)).unsqueeze(0))[0].numpy()
+                    observation = history.append(sim.observation(active.command))
+                    action = policy(torch.from_numpy(observation).unsqueeze(0))[0].numpy()
                 torque = sim.step(action)
                 global_step += 1
                 reason = sim.failure_reason()

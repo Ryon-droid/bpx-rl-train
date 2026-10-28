@@ -30,29 +30,15 @@ app_launcher = AppLauncher(args_cli)
 simulation_app = app_launcher.app
 
 import gymnasium as gym
-from rsl_rl.runners import OnPolicyRunner
 from isaaclab.envs import ManagerBasedRLEnvCfg
 from isaaclab.utils.assets import retrieve_file_path
-from isaaclab_rl.rsl_rl import RslRlOnPolicyRunnerCfg, RslRlVecEnvWrapper, export_policy_as_jit, export_policy_as_onnx
+from isaaclab_rl.rsl_rl import RslRlOnPolicyRunnerCfg, RslRlVecEnvWrapper
 import isaaclab_tasks  # noqa: F401
 from isaaclab_tasks.utils import get_checkpoint_path
 from isaaclab_tasks.utils.hydra import hydra_task_config
 import mirrorme_rl_train.tasks  # noqa: F401
-
-
-def export_policy(runner: OnPolicyRunner, output_dir: str) -> None:
-    try:
-        policy_nn = runner.alg.policy
-    except AttributeError:
-        policy_nn = runner.alg.actor_critic
-    if hasattr(policy_nn, "actor_obs_normalizer"):
-        normalizer = policy_nn.actor_obs_normalizer
-    elif hasattr(policy_nn, "student_obs_normalizer"):
-        normalizer = policy_nn.student_obs_normalizer
-    else:
-        normalizer = None
-    export_policy_as_jit(policy_nn, normalizer=normalizer, path=output_dir, filename=f"{args_cli.task}_45.pt")
-    export_policy_as_onnx(policy_nn, normalizer=normalizer, path=output_dir, filename=f"{args_cli.task}_45.onnx")
+from policy_contract import actor_input_dim
+from runner_utils import export_runner_policy, load_runner_checkpoint, make_runner
 
 
 @hydra_task_config(args_cli.task, args_cli.agent)
@@ -72,13 +58,15 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
 
     env = gym.make(args_cli.task, cfg=env_cfg)
     env = RslRlVecEnvWrapper(env, clip_actions=agent_cfg.clip_actions)
-    runner = OnPolicyRunner(env, agent_cfg.to_dict(), log_dir=None, device=agent_cfg.device)
-    runner.load(checkpoint)
-    export_policy(runner, output_dir)
+    runner = make_runner(env, agent_cfg)
+    load_runner_checkpoint(runner, checkpoint, load_optimizer=False)
+    basename = export_runner_policy(runner, args_cli.task, output_dir)
     print(f"[PASS] checkpoint: {checkpoint}")
-    print(f"[PASS] TorchScript: {os.path.join(output_dir, args_cli.task + '_45.pt')}")
-    print(f"[PASS] ONNX:       {os.path.join(output_dir, args_cli.task + '_45.onnx')}")
-    print("[PASS] interface: obs [batch,45] -> actions [batch,12]")
+    print(f"[PASS] TorchScript: {os.path.join(output_dir, basename + '.pt')}")
+    print(f"[PASS] ONNX:       {os.path.join(output_dir, basename + '.onnx')}")
+    print(f"[PASS] interface: obs [1,{actor_input_dim(args_cli.task)}] -> actions [1,12]")
+    if args_cli.task.endswith("_teacher"):
+        print("[WARNING] Teacher export requires simulation-only terrain/velocity; do not deploy on a blind robot.")
     env.close()
 
 
