@@ -41,6 +41,8 @@ for task_id, env_class, runner_class in (
     ("bpx_stairs_teacher", "BPXStairsTeacherEnvCfg", "BPXStairsTeacherPPORunnerCfg"),
     ("bpx_rough_blind", "BPXRoughBlindEnvCfg", "BPXRoughBlindDistillationRunnerCfg"),
     ("bpx_stairs_blind", "BPXStairsBlindEnvCfg", "BPXStairsBlindDistillationRunnerCfg"),
+    ("bpx_stairs20_teacher", "BPXStairs20TeacherEnvCfg", "BPXStairs20TeacherPPORunnerCfg"),
+    ("bpx_stairs20_blind", "BPXStairs20BlindEnvCfg", "BPXStairs20BlindDistillationRunnerCfg"),
 ):
     gym.register(
         id=task_id,

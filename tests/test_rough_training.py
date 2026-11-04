@@ -31,6 +31,7 @@ commands_module = load_mdp_module("commands")
 DirectionalVelocityCommand = commands_module.DirectionalVelocityCommand
 StairVelocityCommand = commands_module.StairVelocityCommand
 terrain_levels_tracking = load_mdp_module("curriculums").terrain_levels_tracking
+stair_levels_traversal = load_mdp_module("stairs").stair_levels_traversal
 
 
 class TerrainCurriculumTests(unittest.TestCase):
@@ -92,6 +93,30 @@ class TerrainCurriculumTests(unittest.TestCase):
         env = self.make_env([[0.5, 0, 0]] * 3, [3.2, 3.2, 0.0], [0.1] * 3,
                             [True] * 3, [False] * 3)
         self.assert_updates(env, [False, True], [True, False], torch.tensor([2, 0]))
+
+
+class StairTraversalCurriculumTests(unittest.TestCase):
+    make_env = TerrainCurriculumTests.make_env
+    def test_full_flight_required_and_physical_failure_wins(self):
+        env = self.make_env([[0.3, 0, 0]] * 4,
+                            [2.2, 3.4, 3.4, 0.2], [0.02] * 4,
+                            [True, True, True, False], [False, False, True, False])
+        env.episode_length_buf = torch.tensor([1000, 600, 600, 0])
+        env.step_dt = 0.02
+        stair_levels_traversal(env, torch.arange(4))
+        _, up, down = env.scene.terrain.update_env_origins.call_args.args
+        self.assertEqual(up.tolist(), [False, True, False, False])
+        self.assertEqual(down.tolist(), [True, False, True, False])
+
+    def test_standing_and_initial_reset_cannot_advance(self):
+        env = self.make_env([[0, 0, 0], [0.3, 0, 0]],
+                            [3.4, 3.4], [0.0, 0.0], [True, True], [False, False])
+        env.episode_length_buf = torch.tensor([500, 0])
+        env.step_dt = 0.02
+        stair_levels_traversal(env, torch.arange(2))
+        _, up, down = env.scene.terrain.update_env_origins.call_args.args
+        self.assertFalse(up.any())
+        self.assertFalse(down.any())
 
 
 class DirectionalCommandTests(unittest.TestCase):

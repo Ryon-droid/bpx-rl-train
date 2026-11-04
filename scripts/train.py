@@ -26,6 +26,8 @@ parser.add_argument("--seed", type=int, default=None)
 parser.add_argument("--max_iterations", type=int, default=10000)
 parser.add_argument("--teacher_checkpoint", type=str, default=None,
                     help="PPO teacher checkpoint for a new *_blind distillation run.")
+parser.add_argument("--init_checkpoint", type=str, default=None,
+                    help="Initialize a new PPO run from compatible weights, with a fresh optimizer and iteration counter.")
 cli_args.add_rsl_rl_args(parser)
 AppLauncher.add_app_launcher_args(parser)
 args_cli, hydra_args = parser.parse_known_args()
@@ -68,6 +70,8 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
         # Command arrows are unnecessary without a viewport and require remote USD assets.
         env_cfg.commands.base_velocity.debug_vis = False
     distillation = agent_cfg.class_name == "DistillationRunner"
+    if args_cli.init_checkpoint and (distillation or agent_cfg.resume or args_cli.teacher_checkpoint):
+        raise ValueError("--init_checkpoint requires a new PPO run without --resume or --teacher_checkpoint")
     if args_cli.teacher_checkpoint and (not distillation or agent_cfg.resume):
         raise ValueError("--teacher_checkpoint requires a new *_blind run, without --resume")
     if distillation and not agent_cfg.resume and not args_cli.teacher_checkpoint:
@@ -81,8 +85,8 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
     print(f"[INFO] Log directory: {log_dir}")
 
     resume_path = None
-    if args_cli.teacher_checkpoint:
-        resume_path = os.path.abspath(os.path.expanduser(args_cli.teacher_checkpoint))
+    if args_cli.teacher_checkpoint or args_cli.init_checkpoint:
+        resume_path = os.path.abspath(os.path.expanduser(args_cli.teacher_checkpoint or args_cli.init_checkpoint))
         if not os.path.isfile(resume_path):
             raise FileNotFoundError(resume_path)
     elif agent_cfg.resume:
@@ -111,7 +115,11 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
     runner.add_git_repo_to_log(__file__)
     if resume_path is not None:
         print(f"[INFO] Loading checkpoint: {resume_path}")
-        load_runner_checkpoint(runner, resume_path, teacher_initialization=bool(args_cli.teacher_checkpoint))
+        load_runner_checkpoint(runner, resume_path, teacher_initialization=bool(args_cli.teacher_checkpoint),
+                               load_optimizer=not bool(args_cli.init_checkpoint))
+        if args_cli.init_checkpoint:
+            runner.current_learning_iteration = 0
+            print("[INFO] Initialized compatible weights; optimizer and iteration counter start fresh.")
 
     dump_yaml(os.path.join(log_dir, "params", "env.yaml"), env_cfg)
     dump_yaml(os.path.join(log_dir, "params", "agent.yaml"), agent_cfg)

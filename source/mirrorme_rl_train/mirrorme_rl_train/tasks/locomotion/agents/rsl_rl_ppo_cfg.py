@@ -115,3 +115,17 @@ class BPXRoughBlindDistillationRunnerCfg(BPXFlatPPORunnerCfg):
 @configclass
 class BPXStairsBlindDistillationRunnerCfg(BPXRoughBlindDistillationRunnerCfg):
     experiment_name = "bpx_stairs_blind"
+
+
+@configclass
+class BPXStairs20TeacherPPORunnerCfg(BPXRoughTeacherPPORunnerCfg):
+    experiment_name = "bpx_stairs20_teacher"
+    save_interval = 100
+
+    def __post_init__(self):
+        self.algorithm.learning_rate = 3.0e-4
+
+
+@configclass
+class BPXStairs20BlindDistillationRunnerCfg(BPXRoughBlindDistillationRunnerCfg):
+    experiment_name = "bpx_stairs20_blind"

@@ -50,6 +50,20 @@ def main() -> None:
     # This check is headless; avoid loading remote visualization-only USD assets.
     cfg.commands.base_velocity.debug_vis = False
     agent_cfg = load_cfg_from_registry(args_cli.task, "rsl_rl_cfg_entry_point")
+    if args_cli.task.startswith("bpx_stairs20_"):
+        import numpy as np
+
+        generator = cfg.scene.terrain.terrain_generator
+        for terrain in generator.sub_terrains.values():
+            for row in range(generator.num_rows):
+                difficulty = (row + 0.5) / generator.num_rows
+                meshes, _ = terrain.function(difficulty, terrain.replace(size=generator.size))
+                tops = np.unique(np.round([mesh.bounds[1, 2] for mesh in meshes], 6))
+                low, high = terrain.step_height_range
+                expected = low + (high - low) * row / (generator.num_rows - 1)
+                if not np.allclose(np.diff(tops), expected, atol=1e-6):
+                    raise RuntimeError(f"stair mesh risers do not match row {row}: {tops}")
+        print("[PASS] Uphill/downhill mesh risers verified: 4, 6, 8, ..., 20 cm.")
     env = gym.make(args_cli.task, cfg=cfg)
     obs, _ = env.reset()
     policy_obs = obs["policy"]

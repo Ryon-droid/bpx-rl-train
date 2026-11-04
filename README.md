@@ -8,6 +8,8 @@ This repository covers simulation training, evaluation, and policy export only. 
 
 Optional privileged-teacher / blind-student tasks are also available: train `bpx_rough_teacher` or `bpx_stairs_teacher` with simulated terrain, then distill `bpx_rough_blind` or `bpx_stairs_blind` using 20 proprioceptive frames. See the [training and deployment-interface guide (Chinese)](docs/bpx-privileged-blind-training.zh-CN.md). The original three tasks retain the 45-D interface described below.
 
+For a 20 cm target riser, `bpx_stairs20_teacher` / `bpx_stairs20_blind` add uphill/downhill curricula and first-attempt traversal evaluation. See the [20 cm stair guide (Chinese)](docs/bpx-stairs20-training.zh-CN.md). This is a training target, not a verified capability.
+
 ## Task and naming
 
 The project registers flat-ground, mixed-terrain and dedicated stair tasks:
