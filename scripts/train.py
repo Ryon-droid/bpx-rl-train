@@ -64,6 +64,9 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
     if args_cli.device is not None:
         env_cfg.sim.device = args_cli.device
         agent_cfg.device = args_cli.device
+    if args_cli.headless:
+        # Command arrows are unnecessary without a viewport and require remote USD assets.
+        env_cfg.commands.base_velocity.debug_vis = False
     distillation = agent_cfg.class_name == "DistillationRunner"
     if args_cli.teacher_checkpoint and (not distillation or agent_cfg.resume):
         raise ValueError("--teacher_checkpoint requires a new *_blind run, without --resume")

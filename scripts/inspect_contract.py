@@ -47,6 +47,8 @@ JOINT_NAMES = (
 
 def main() -> None:
     cfg = parse_env_cfg(args_cli.task, device=args_cli.device or "cuda:0", num_envs=1)
+    # This check is headless; avoid loading remote visualization-only USD assets.
+    cfg.commands.base_velocity.debug_vis = False
     agent_cfg = load_cfg_from_registry(args_cli.task, "rsl_rl_cfg_entry_point")
     env = gym.make(args_cli.task, cfg=cfg)
     obs, _ = env.reset()

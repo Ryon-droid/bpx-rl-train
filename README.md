@@ -84,6 +84,8 @@ conda activate bpx_train
 
 The first Isaac Sim launch may download extension caches and ask you to accept the NVIDIA Omniverse license agreement. Read and answer that prompt directly; the setup script does not accept the agreement on your behalf.
 
+Headless training/playback/evaluation, contract checks, and exports disable velocity command arrows to avoid fetching visualization-only assets from NVIDIA servers. Terrain ray observations remain enabled.
+
 ### Manual installation
 
 Use these commands only when troubleshooting or when you need control over each installation step:

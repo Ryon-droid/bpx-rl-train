@@ -124,6 +124,8 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
     if args_cli.device is not None:
         env_cfg.sim.device = args_cli.device
         agent_cfg.device = args_cli.device
+    if args_cli.headless:
+        env_cfg.commands.base_velocity.debug_vis = False
 
     log_root = os.path.abspath(os.path.join("logs", agent_cfg.experiment_name))
     if args_cli.checkpoint:
