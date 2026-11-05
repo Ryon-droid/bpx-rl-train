@@ -54,8 +54,9 @@ def main():
     parser.add_argument("--directory", required=True)
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--height", type=float, default=0.15)
     args = parser.parse_args()
-    report = summarize(args.directory, args.prefix)
+    report = summarize(args.directory, args.prefix, height=args.height)
     Path(args.output).write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
 

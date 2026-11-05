@@ -11,9 +11,9 @@ add_project_source()
 from isaaclab.app import AppLauncher
 
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("--task", default="bpx_stairs15_teacher")
+parser.add_argument("--task", default="bpx_stairs17_teacher")
 parser.add_argument("--checkpoint", required=True)
-parser.add_argument("--step_height", type=float, default=0.15)
+parser.add_argument("--step_height", type=float, default=0.17)
 parser.add_argument("--num_envs", type=int, default=64)
 parser.add_argument("--seed", type=int, default=2026)
 parser.add_argument("--speed", type=float, default=0.30)

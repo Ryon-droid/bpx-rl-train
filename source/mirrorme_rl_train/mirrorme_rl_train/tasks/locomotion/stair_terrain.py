@@ -40,6 +40,11 @@ def stairs15_generator():
                            step_heights=(0.04, 0.06, 0.08, 0.10, 0.12, 0.14, 0.15))
 
 
+def stairs17_generator():
+    return stair_generator(max_height=0.17, num_levels=8,
+                           step_heights=(0.04, 0.06, 0.08, 0.10, 0.12, 0.14, 0.16, 0.17))
+
+
 def stair_generator(*, max_height, num_levels, step_heights=None):
     if step_heights is not None and (len(step_heights) != num_levels or
                                      step_heights[0] != 0.04 or step_heights[-1] != max_height or

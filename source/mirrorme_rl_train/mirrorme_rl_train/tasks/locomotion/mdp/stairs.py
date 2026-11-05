@@ -9,13 +9,19 @@ def stair_flight_boundary(env, distance: float = 3.3):
     return delta.abs().amax(dim=1) >= distance
 
 
-def stair_levels_traversal(env, env_ids, distance: float = 3.3, replay_fraction: float = 0.0):
+def stair_levels_traversal(env, env_ids, distance: float = 3.3, replay_fraction: float = 0.0,
+                           require_straight_progress: bool = False):
     terrain = env.scene.terrain
     command = env.command_manager.get_term("base_velocity")
     speed = command.command[env_ids, :2].norm(dim=1)
     moving = speed > 0.15
     delta = env.scene["robot"].data.root_pos_w[env_ids, :2] - env.scene.env_origins[env_ids, :2]
     reached_landing = delta.abs().amax(dim=1) >= distance
+    if require_straight_progress:
+        velocity = command.command[env_ids]
+        longitudinal = (velocity[:, 0].abs() > 0.15) & (velocity[:, 1:].abs() < 1e-5).all(dim=1)
+        straight_success = (velocity[:, 0].sign() * delta[:, 0] >= distance) & (delta[:, 1].abs() < 0.75)
+        reached_landing = torch.where(longitudinal, straight_success, reached_landing)
     failed = env.termination_manager.terminated[env_ids]
     timed_out = env.termination_manager.time_outs[env_ids]
     # UniformVelocityCommand integrates error over its configured 20 s period.
@@ -50,3 +56,17 @@ def stair_levels_traversal(env, env_ids, distance: float = 3.3, replay_fraction:
         f"at_{round(high * 100)}cm_pct": 100.0 * (levels == top_level).float().mean(),
         "promoted_pct": 100.0 * up.sum() / moving.sum().clamp(min=1),
     }
+
+
+def straight_motion_error(env, command_name: str = "base_velocity", lateral_scale: float = 2.0,
+                          yaw_scale: float = 1.0):
+    """Extra velocity tracking cost only for deliberate forward/backward flights.
+
+    No position or hidden heading reference enters the policy observation.
+    Lateral, turning, mixed and standing commands retain their original rewards.
+    """
+    command = env.command_manager.get_command(command_name)
+    active = (command[:, 0].abs() > 0.15) & (command[:, 1:].abs() < 1e-5).all(dim=1)
+    robot = env.scene["robot"].data
+    return active * (lateral_scale * robot.root_lin_vel_b[:, 1].square()
+                     + yaw_scale * robot.root_ang_vel_b[:, 2].square())

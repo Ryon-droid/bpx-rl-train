@@ -8,7 +8,7 @@
 
 新增可选的“训练带地形特权信息、部署无相机”两阶段任务：`bpx_rough_teacher` / `bpx_stairs_teacher` 训练教师，`bpx_rough_blind` / `bpx_stairs_blind` 蒸馏 20 帧本体历史学生。完整命令、论文区别与 900 维部署接口见[特权教师与盲学生训练](docs/bpx-privileged-blind-training.zh-CN.md)。以下原有三个任务的 45 维接口说明继续适用。
 
-当前目标阶高为 **15 cm**，任务为 `bpx_stairs15_teacher` / `bpx_stairs15_blind`；已有教师的倒退下楼专项微调使用 `bpx_stairs15_focus_teacher`。见 [15 厘米台阶训练与评估](docs/bpx-stairs15-training.zh-CN.md)。保留16/20 cm历史任务；训练目标不代表盲学生或实机通过能力已验证。
+当前目标阶高为 **17 cm**，任务为 `bpx_stairs17_teacher` / `bpx_stairs17_blind`。本轮强化均衡前后方向并修正上楼偏航，见 [17厘米台阶强化训练](docs/bpx-stairs17-training.zh-CN.md)。保留15/16/20cm历史任务；训练目标不代表盲学生或实机通过能力已验证。
 
 ## 任务与命名
 

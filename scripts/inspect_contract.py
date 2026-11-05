@@ -50,7 +50,7 @@ def main() -> None:
     # This check is headless; avoid loading remote visualization-only USD assets.
     cfg.commands.base_velocity.debug_vis = False
     agent_cfg = load_cfg_from_registry(args_cli.task, "rsl_rl_cfg_entry_point")
-    if args_cli.task.startswith(("bpx_stairs15_", "bpx_stairs16_", "bpx_stairs20_")):
+    if args_cli.task.startswith(("bpx_stairs15_", "bpx_stairs16_", "bpx_stairs17_", "bpx_stairs20_")):
         import numpy as np
 
         generator = cfg.scene.terrain.terrain_generator

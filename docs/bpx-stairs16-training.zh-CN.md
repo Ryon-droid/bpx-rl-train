@@ -1,6 +1,6 @@
 # 16 厘米台阶训练
 
-2026-11-05：当前目标已改为 [15 cm 台阶](bpx-stairs15-training.zh-CN.md)。以下为历史16 cm方案。
+2026-11-05：当前目标已改为 [17 cm 台阶](bpx-stairs17-training.zh-CN.md)。以下为历史16 cm方案。
 
 历史目标为 **16 cm**。使用 `bpx_stairs16_teacher` 训练感知教师，评估合格后使用 `bpx_stairs16_blind` 蒸馏盲学生。
 

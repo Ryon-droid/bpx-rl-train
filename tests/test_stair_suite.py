@@ -14,17 +14,25 @@ spec.loader.exec_module(suite)
 
 
 class StairSuiteTests(unittest.TestCase):
-    def write_suite(self, folder):
+    def write_suite(self, folder, height=0.15):
         for condition in ("nominal", "robust"):
             for direction in ("forward", "backward"):
                 for seed in (2026, 2027, 2028):
-                    report = {"checkpoint": "/teacher.pt", "height_m": 0.15, "num_envs": 64,
+                    report = {"checkpoint": "/teacher.pt", "height_m": height, "num_envs": 64,
                               "seed": seed, "condition": condition,
                               "speed_m_s": 0.3 if direction == "forward" else -0.3,
                               "attempts": [{"env": i, "terrain": "up" if i < 32 else "down",
                                             "success": True, "physical_failure": False,
                                             "lateral_offset_m": 0.0} for i in range(64)]}
                     (folder / f"test_{condition}_{direction}_{seed}.json").write_text(json.dumps(report))
+
+    def test_17cm_gate_rejects_reports_for_another_height(self):
+        with tempfile.TemporaryDirectory() as temp:
+            folder = Path(temp)
+            self.write_suite(folder, height=0.17)
+            self.assertTrue(suite.summarize(folder, "test", height=0.17)["teacher_passed"])
+            with self.assertRaises(ValueError):
+                suite.summarize(folder, "test", height=0.15)
 
     def test_weak_backward_descent_cannot_be_averaged_away(self):
         with tempfile.TemporaryDirectory() as temp:

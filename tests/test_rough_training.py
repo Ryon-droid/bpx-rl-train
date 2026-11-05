@@ -32,7 +32,8 @@ DirectionalVelocityCommand = commands_module.DirectionalVelocityCommand
 StairVelocityCommand = commands_module.StairVelocityCommand
 FocusedStairVelocityCommand = commands_module.FocusedStairVelocityCommand
 terrain_levels_tracking = load_mdp_module("curriculums").terrain_levels_tracking
-stair_levels_traversal = load_mdp_module("stairs").stair_levels_traversal
+stairs_module = load_mdp_module("stairs")
+stair_levels_traversal = stairs_module.stair_levels_traversal
 
 
 class TerrainCurriculumTests(unittest.TestCase):
@@ -101,6 +102,33 @@ class TerrainCurriculumTests(unittest.TestCase):
 
 class StairTraversalCurriculumTests(unittest.TestCase):
     make_env = TerrainCurriculumTests.make_env
+
+    def test_direction_and_lateral_drift_gate_only_pure_longitudinal(self):
+        env = self.make_env([[0.3, 0, 0], [-0.3, 0, 0], [-0.3, 0, 0],
+                             [0.3, 0, 0], [0, 0.3, 0]],
+                            [3.4, -3.4, 3.4, 3.4, 0.0], [0.02] * 5,
+                            [True] * 5, [False] * 5)
+        env.scene["robot"].data.root_pos_w[3, 1] = 0.8
+        env.scene["robot"].data.root_pos_w[4, 1] = 3.4
+        env.episode_length_buf = torch.full((5,), 600)
+        env.step_dt = 0.02
+        stair_levels_traversal(env, torch.arange(5), require_straight_progress=True)
+        _, up, down = env.scene.terrain.update_env_origins.call_args.args
+        self.assertEqual(up.tolist(), [True, True, False, False, True])
+        self.assertEqual(down.tolist(), [False, False, True, True, False])
+
+    def test_straight_cost_preserves_turning_strafing_and_standing(self):
+        commands = torch.tensor([[0.3, 0, 0], [-0.3, 0, 0], [0, 0.2, 0],
+                                 [0, 0, 0.3], [0.3, 0.1, 0.1], [0, 0, 0]])
+        data = SimpleNamespace(root_lin_vel_b=torch.tensor([[0.0, 0.2, 0.0]] * 6),
+                               root_ang_vel_b=torch.tensor([[0.0, 0.0, 0.3]] * 6))
+        env = SimpleNamespace(scene={"robot": SimpleNamespace(data=data)},
+                              command_manager=SimpleNamespace(get_command=lambda name: commands))
+        cost = stairs_module.straight_motion_error(env)
+        self.assertTrue(torch.allclose(cost, torch.tensor([0.17, 0.17, 0, 0, 0, 0])))
+        data.root_lin_vel_b.zero_()
+        data.root_ang_vel_b.zero_()
+        self.assertTrue((stairs_module.straight_motion_error(env) == 0).all())
 
     def test_nonuniform_15cm_tiers_and_replay_origins(self):
         env = self.make_env([[0.3, 0, 0]] * 20, [3.4] * 20, [0.02] * 20,

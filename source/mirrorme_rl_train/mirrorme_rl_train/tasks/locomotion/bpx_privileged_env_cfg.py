@@ -7,7 +7,7 @@ separate tasks deliberately have different observation/checkpoint contracts.
 from isaaclab.managers import ObservationGroupCfg as ObsGroup
 from isaaclab.managers import ObservationTermCfg as ObsTerm
 from isaaclab.managers import SceneEntityCfg
-from isaaclab.managers import CurriculumTermCfg, TerminationTermCfg
+from isaaclab.managers import CurriculumTermCfg, TerminationTermCfg, RewardTermCfg
 from isaaclab.sensors import RayCasterCfg, patterns
 from isaaclab.utils import configclass
 from isaaclab_tasks.manager_based.locomotion.velocity import mdp
@@ -15,9 +15,9 @@ from isaaclab_tasks.manager_based.locomotion.velocity import mdp
 from .bpx_flat_env_cfg import BASE_BODY_NAME, BPXSceneCfg, ObservationsCfg
 from .bpx_rough_env_cfg import BPXRoughEnvCfg
 from .bpx_stairs_env_cfg import BPXStairsEnvCfg
-from .stair_terrain import stairs15_generator, stairs16_generator, stairs20_generator
-from .mdp.commands import FocusedStairVelocityCommand
-from .mdp.stairs import stair_flight_boundary, stair_levels_traversal
+from .stair_terrain import stairs15_generator, stairs16_generator, stairs17_generator, stairs20_generator
+from .mdp.commands import FocusedStairVelocityCommand, StairVelocityCommand
+from .mdp.stairs import stair_flight_boundary, stair_levels_traversal, straight_motion_error
 
 HISTORY_LENGTH = 20  # 50 Hz control: 0.4 s, 45 values per observation.
 HEIGHT_SCAN_DIM = 187  # Inclusive 17 x 11 grid, 0.1 m resolution.
@@ -160,4 +160,22 @@ class BPXStairs15FocusTeacherEnvCfg(BPXStairs15TeacherEnvCfg):
 
 @configclass
 class BPXStairs15BlindEnvCfg(BPXStairs15TeacherEnvCfg):
+    observations: BPXBlindObservationsCfg = BPXBlindObservationsCfg()
+
+
+@configclass
+class BPXStairs17TeacherEnvCfg(BPXStairs20TeacherEnvCfg):
+    """Balanced forward/backward practice up to exact 17 cm risers."""
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.scene.terrain.terrain_generator = stairs17_generator()
+        self.scene.terrain.max_init_terrain_level = 7
+        self.commands.base_velocity.class_type = StairVelocityCommand
+        self.curriculum.terrain_levels.params.update(replay_fraction=0.35, require_straight_progress=True)
+        self.rewards.straight_motion_error = RewardTermCfg(func=straight_motion_error, weight=-1.0)
+
+
+@configclass
+class BPXStairs17BlindEnvCfg(BPXStairs17TeacherEnvCfg):
     observations: BPXBlindObservationsCfg = BPXBlindObservationsCfg()
