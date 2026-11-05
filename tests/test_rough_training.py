@@ -46,7 +46,10 @@ class TerrainCurriculumTests(unittest.TestCase):
         )))
         scene.env_origins = torch.zeros(count, 3)
         scene.terrain = SimpleNamespace(
-            terrain_levels=torch.ones(count, dtype=torch.long), update_env_origins=Mock()
+            terrain_levels=torch.ones(count, dtype=torch.long), update_env_origins=Mock(),
+            cfg=SimpleNamespace(terrain_generator=SimpleNamespace(
+                num_rows=9, sub_terrains={"up": SimpleNamespace(step_height_range=(0.04, 0.20))}
+            )),
         )
         command_term = SimpleNamespace(
             command=torch.tensor(commands, dtype=torch.float32),
@@ -97,6 +100,21 @@ class TerrainCurriculumTests(unittest.TestCase):
 
 class StairTraversalCurriculumTests(unittest.TestCase):
     make_env = TerrainCurriculumTests.make_env
+
+    def test_metrics_follow_16cm_curriculum_cap(self):
+        env = self.make_env([[0.3, 0, 0]] * 2, [3.4] * 2, [0.02] * 2,
+                            [True] * 2, [False] * 2)
+        env.episode_length_buf = torch.tensor([600, 600])
+        env.step_dt = 0.02
+        generator = env.scene.terrain.cfg.terrain_generator
+        generator.num_rows = 7
+        generator.sub_terrains["up"].step_height_range = (0.04, 0.16)
+        env.scene.terrain.terrain_levels = torch.tensor([0, 6])
+        result = stair_levels_traversal(env, torch.arange(2))
+        self.assertAlmostEqual(result["mean_step_height_cm"].item(), 10.0, places=4)
+        self.assertEqual(result["at_16cm_pct"].item(), 50.0)
+        self.assertNotIn("at_20cm_pct", result)
+
     def test_full_flight_required_and_physical_failure_wins(self):
         env = self.make_env([[0.3, 0, 0]] * 4,
                             [2.2, 3.4, 3.4, 0.2], [0.02] * 4,

@@ -129,3 +129,13 @@ class BPXStairs20TeacherPPORunnerCfg(BPXRoughTeacherPPORunnerCfg):
 @configclass
 class BPXStairs20BlindDistillationRunnerCfg(BPXRoughBlindDistillationRunnerCfg):
     experiment_name = "bpx_stairs20_blind"
+
+
+@configclass
+class BPXStairs16TeacherPPORunnerCfg(BPXStairs20TeacherPPORunnerCfg):
+    experiment_name = "bpx_stairs16_teacher"
+
+
+@configclass
+class BPXStairs16BlindDistillationRunnerCfg(BPXRoughBlindDistillationRunnerCfg):
+    experiment_name = "bpx_stairs16_blind"

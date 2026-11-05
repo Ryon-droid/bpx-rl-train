@@ -29,9 +29,12 @@ def stair_levels_traversal(env, env_ids, distance: float = 3.3):
     down = moving & completed & (failed | (timed_out & ~reached_landing)) & ~up
     terrain.update_env_origins(env_ids, up, down)
     levels = terrain.terrain_levels.float()
+    generator = terrain.cfg.terrain_generator
+    low, high = next(iter(generator.sub_terrains.values())).step_height_range
+    top_level = generator.num_rows - 1
     return {
         "mean_level": levels.mean(),
-        "mean_step_height_cm": 4.0 + 2.0 * levels.mean(),
-        "at_20cm_pct": 100.0 * (levels == 8).float().mean(),
+        "mean_step_height_cm": 100.0 * (low + (high - low) * levels.mean() / top_level),
+        f"at_{round(high * 100)}cm_pct": 100.0 * (levels == top_level).float().mean(),
         "promoted_pct": 100.0 * up.sum() / moving.sum().clamp(min=1),
     }

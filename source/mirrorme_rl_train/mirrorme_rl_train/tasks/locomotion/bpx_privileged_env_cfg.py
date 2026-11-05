@@ -15,7 +15,7 @@ from isaaclab_tasks.manager_based.locomotion.velocity import mdp
 from .bpx_flat_env_cfg import BASE_BODY_NAME, BPXSceneCfg, ObservationsCfg
 from .bpx_rough_env_cfg import BPXRoughEnvCfg
 from .bpx_stairs_env_cfg import BPXStairsEnvCfg
-from .stair_terrain import stairs20_generator
+from .stair_terrain import stairs16_generator, stairs20_generator
 from .mdp.stairs import stair_flight_boundary, stair_levels_traversal
 
 HISTORY_LENGTH = 20  # 50 Hz control: 0.4 s, 45 values per observation.
@@ -120,4 +120,18 @@ class BPXStairs20TeacherEnvCfg(BPXStairsTeacherEnvCfg):
 
 @configclass
 class BPXStairs20BlindEnvCfg(BPXStairs20TeacherEnvCfg):
+    observations: BPXBlindObservationsCfg = BPXBlindObservationsCfg()
+
+
+@configclass
+class BPXStairs16TeacherEnvCfg(BPXStairs20TeacherEnvCfg):
+    """Progress from 4 cm to exact 16 cm risers on uphill/downhill flights."""
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.scene.terrain.terrain_generator = stairs16_generator()
+
+
+@configclass
+class BPXStairs16BlindEnvCfg(BPXStairs16TeacherEnvCfg):
     observations: BPXBlindObservationsCfg = BPXBlindObservationsCfg()
