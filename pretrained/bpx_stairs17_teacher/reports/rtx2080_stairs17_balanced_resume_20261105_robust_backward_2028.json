@@ -1,0 +1,1177 @@
+{
+  "checkpoint": "pretrained/bpx_stairs17_teacher/model_1499.pt",
+  "task": "bpx_stairs17_teacher",
+  "height_m": 0.17,
+  "tread_m": 0.3,
+  "seed": 2028,
+  "speed_m_s": -0.3,
+  "robust": true,
+  "condition": "robust",
+  "episode_budget_s": 20.0,
+  "num_envs": 64,
+  "attempts": [
+    {
+      "env": 33,
+      "terrain": "down",
+      "success": false,
+      "physical_failure": true,
+      "base_contact": false,
+      "bad_orientation": true,
+      "progress_m": 1.7936092615127563,
+      "lateral_offset_m": 0.349973201751709,
+      "vertical_progress_m": 0.45307955145835876,
+      "max_abs_roll_pitch_yaw_rad": [
+        1.0427706241607666,
+        0.7499101161956787,
+        0.3884317874908447
+      ],
+      "max_abs_lateral_m": 0.349973201751709,
+      "elapsed_s": 8.24
+    },
+    {
+      "env": 34,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.304007053375244,
+      "lateral_offset_m": -0.11102414131164551,
+      "vertical_progress_m": 1.2356752157211304,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.10960721969604492,
+        0.5397384166717529,
+        0.0664520263671875
+      ],
+      "max_abs_lateral_m": 0.11936640739440918,
+      "elapsed_s": 12.36
+    },
+    {
+      "env": 63,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.306743860244751,
+      "lateral_offset_m": -0.13891983032226562,
+      "vertical_progress_m": 1.230238914489746,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.12618255615234375,
+        0.5657598972320557,
+        0.07897543907165527
+      ],
+      "max_abs_lateral_m": 0.13891983032226562,
+      "elapsed_s": 12.74
+    },
+    {
+      "env": 50,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3030033111572266,
+      "lateral_offset_m": 0.09624958038330078,
+      "vertical_progress_m": 1.2427796125411987,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.12550687789916992,
+        0.5566599369049072,
+        0.07839512825012207
+      ],
+      "max_abs_lateral_m": 0.1086125373840332,
+      "elapsed_s": 12.88
+    },
+    {
+      "env": 56,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3035123348236084,
+      "lateral_offset_m": 0.049480438232421875,
+      "vertical_progress_m": 1.2358814477920532,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.16791939735412598,
+        0.5692970752716064,
+        0.11529397964477539
+      ],
+      "max_abs_lateral_m": 0.06734371185302734,
+      "elapsed_s": 12.94
+    },
+    {
+      "env": 43,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3051557540893555,
+      "lateral_offset_m": -0.10747647285461426,
+      "vertical_progress_m": 1.2379627227783203,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.12246012687683105,
+        0.512653112411499,
+        0.05860280990600586
+      ],
+      "max_abs_lateral_m": 0.1270439624786377,
+      "elapsed_s": 12.96
+    },
+    {
+      "env": 18,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.30354642868042,
+      "lateral_offset_m": 0.12134265899658203,
+      "vertical_progress_m": 1.0969035625457764,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.1501164436340332,
+        0.5629866123199463,
+        0.135162353515625
+      ],
+      "max_abs_lateral_m": 0.12134265899658203,
+      "elapsed_s": 13.0
+    },
+    {
+      "env": 58,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.303497791290283,
+      "lateral_offset_m": -0.12859177589416504,
+      "vertical_progress_m": 1.2592573165893555,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.14485931396484375,
+        0.5301167964935303,
+        0.04531550407409668
+      ],
+      "max_abs_lateral_m": 0.16322803497314453,
+      "elapsed_s": 13.0
+    },
+    {
+      "env": 61,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3044276237487793,
+      "lateral_offset_m": 0.004593372344970703,
+      "vertical_progress_m": 1.2321895360946655,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.16986584663391113,
+        0.5417952537536621,
+        0.05730295181274414
+      ],
+      "max_abs_lateral_m": 0.08659219741821289,
+      "elapsed_s": 13.0
+    },
+    {
+      "env": 4,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3026015758514404,
+      "lateral_offset_m": -0.19689226150512695,
+      "vertical_progress_m": 1.0951919555664062,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.410308837890625,
+        0.5744340419769287,
+        0.09532380104064941
+      ],
+      "max_abs_lateral_m": 0.20113039016723633,
+      "elapsed_s": 13.06
+    },
+    {
+      "env": 32,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.302251100540161,
+      "lateral_offset_m": -0.04002189636230469,
+      "vertical_progress_m": 1.2305090427398682,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.12998056411743164,
+        0.5474662780761719,
+        0.12189698219299316
+      ],
+      "max_abs_lateral_m": 0.09023523330688477,
+      "elapsed_s": 13.06
+    },
+    {
+      "env": 37,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3022782802581787,
+      "lateral_offset_m": -0.3409914970397949,
+      "vertical_progress_m": 1.2412302494049072,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.13456034660339355,
+        0.5484988689422607,
+        0.05524086952209473
+      ],
+      "max_abs_lateral_m": 0.34753870964050293,
+      "elapsed_s": 13.06
+    },
+    {
+      "env": 38,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3042643070220947,
+      "lateral_offset_m": -0.08244514465332031,
+      "vertical_progress_m": 1.2387254238128662,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.0964362621307373,
+        0.513495683670044,
+        0.09514665603637695
+      ],
+      "max_abs_lateral_m": 0.09273576736450195,
+      "elapsed_s": 13.08
+    },
+    {
+      "env": 46,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.304086923599243,
+      "lateral_offset_m": 0.22087812423706055,
+      "vertical_progress_m": 1.2451472282409668,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.11961150169372559,
+        0.5426571369171143,
+        0.09915280342102051
+      ],
+      "max_abs_lateral_m": 0.22917413711547852,
+      "elapsed_s": 13.08
+    },
+    {
+      "env": 57,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.301529884338379,
+      "lateral_offset_m": -0.5234329700469971,
+      "vertical_progress_m": 1.239578366279602,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.12938165664672852,
+        0.5083763599395752,
+        0.15274643898010254
+      ],
+      "max_abs_lateral_m": 0.5234329700469971,
+      "elapsed_s": 13.08
+    },
+    {
+      "env": 39,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.303239107131958,
+      "lateral_offset_m": 0.20043182373046875,
+      "vertical_progress_m": 1.2368412017822266,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.1442708969116211,
+        0.5795352458953857,
+        0.19016504287719727
+      ],
+      "max_abs_lateral_m": 0.2948017120361328,
+      "elapsed_s": 13.120000000000001
+    },
+    {
+      "env": 17,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3049674034118652,
+      "lateral_offset_m": 0.2941873073577881,
+      "vertical_progress_m": 1.0986167192459106,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.12007951736450195,
+        0.5672991275787354,
+        0.1578655242919922
+      ],
+      "max_abs_lateral_m": 0.2941873073577881,
+      "elapsed_s": 13.18
+    },
+    {
+      "env": 60,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.303321361541748,
+      "lateral_offset_m": -0.304030179977417,
+      "vertical_progress_m": 1.2513459920883179,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.18886232376098633,
+        0.579885721206665,
+        0.11657214164733887
+      ],
+      "max_abs_lateral_m": 0.33124423027038574,
+      "elapsed_s": 13.18
+    },
+    {
+      "env": 48,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3048834800720215,
+      "lateral_offset_m": -0.030867815017700195,
+      "vertical_progress_m": 1.2334452867507935,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.10609602928161621,
+        0.5332686901092529,
+        0.0597381591796875
+      ],
+      "max_abs_lateral_m": 0.0319218635559082,
+      "elapsed_s": 13.200000000000001
+    },
+    {
+      "env": 7,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3006813526153564,
+      "lateral_offset_m": -0.3471488952636719,
+      "vertical_progress_m": 1.0957717895507812,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.24329733848571777,
+        0.6434271335601807,
+        0.11950922012329102
+      ],
+      "max_abs_lateral_m": 0.3471488952636719,
+      "elapsed_s": 13.280000000000001
+    },
+    {
+      "env": 31,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3053548336029053,
+      "lateral_offset_m": -0.45865726470947266,
+      "vertical_progress_m": 1.0931217670440674,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.15553641319274902,
+        0.6439027786254883,
+        0.1668229103088379
+      ],
+      "max_abs_lateral_m": 0.45865726470947266,
+      "elapsed_s": 13.34
+    },
+    {
+      "env": 54,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.301398754119873,
+      "lateral_offset_m": 0.20496225357055664,
+      "vertical_progress_m": 1.240216851234436,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.13260388374328613,
+        0.4804494380950928,
+        0.10701894760131836
+      ],
+      "max_abs_lateral_m": 0.20586442947387695,
+      "elapsed_s": 13.38
+    },
+    {
+      "env": 10,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3007254600524902,
+      "lateral_offset_m": -0.07154083251953125,
+      "vertical_progress_m": 1.0892088413238525,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.11366081237792969,
+        0.5619702339172363,
+        0.11328458786010742
+      ],
+      "max_abs_lateral_m": 0.09419679641723633,
+      "elapsed_s": 13.4
+    },
+    {
+      "env": 47,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3067431449890137,
+      "lateral_offset_m": -0.23354554176330566,
+      "vertical_progress_m": 1.225760817527771,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.22229886054992676,
+        0.5342826843261719,
+        0.08074951171875
+      ],
+      "max_abs_lateral_m": 0.23990845680236816,
+      "elapsed_s": 13.42
+    },
+    {
+      "env": 44,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3055167198181152,
+      "lateral_offset_m": 0.21296453475952148,
+      "vertical_progress_m": 1.2341315746307373,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.12058877944946289,
+        0.5341637134552002,
+        0.10174345970153809
+      ],
+      "max_abs_lateral_m": 0.2133030891418457,
+      "elapsed_s": 13.46
+    },
+    {
+      "env": 28,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3034446239471436,
+      "lateral_offset_m": -0.611666202545166,
+      "vertical_progress_m": 1.0886036157608032,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.1679699420928955,
+        0.558732271194458,
+        0.20274925231933594
+      ],
+      "max_abs_lateral_m": 0.611666202545166,
+      "elapsed_s": 13.52
+    },
+    {
+      "env": 55,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3016602993011475,
+      "lateral_offset_m": 0.31486034393310547,
+      "vertical_progress_m": 1.2328084707260132,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.227219820022583,
+        0.6065468788146973,
+        0.11028242111206055
+      ],
+      "max_abs_lateral_m": 0.37683534622192383,
+      "elapsed_s": 13.52
+    },
+    {
+      "env": 8,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3054583072662354,
+      "lateral_offset_m": 0.3924129009246826,
+      "vertical_progress_m": 1.0569663047790527,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.14072966575622559,
+        0.607182502746582,
+        0.17113947868347168
+      ],
+      "max_abs_lateral_m": 0.3924129009246826,
+      "elapsed_s": 13.540000000000001
+    },
+    {
+      "env": 20,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.301785945892334,
+      "lateral_offset_m": 0.4803798198699951,
+      "vertical_progress_m": 1.094524621963501,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.2141411304473877,
+        0.575963020324707,
+        0.13805079460144043
+      ],
+      "max_abs_lateral_m": 0.4803798198699951,
+      "elapsed_s": 13.56
+    },
+    {
+      "env": 3,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3029990196228027,
+      "lateral_offset_m": 0.16388964653015137,
+      "vertical_progress_m": 1.0965642929077148,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.12433648109436035,
+        0.6449873447418213,
+        0.08975410461425781
+      ],
+      "max_abs_lateral_m": 0.16480755805969238,
+      "elapsed_s": 13.58
+    },
+    {
+      "env": 5,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.304025411605835,
+      "lateral_offset_m": 0.01946115493774414,
+      "vertical_progress_m": 1.0646722316741943,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.19277095794677734,
+        0.5515222549438477,
+        0.16168427467346191
+      ],
+      "max_abs_lateral_m": 0.1146399974822998,
+      "elapsed_s": 13.58
+    },
+    {
+      "env": 23,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3028433322906494,
+      "lateral_offset_m": -0.3242826461791992,
+      "vertical_progress_m": 1.0939416885375977,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.16247129440307617,
+        0.5796141624450684,
+        0.13530564308166504
+      ],
+      "max_abs_lateral_m": 0.327883243560791,
+      "elapsed_s": 13.58
+    },
+    {
+      "env": 13,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.302128314971924,
+      "lateral_offset_m": -0.10931634902954102,
+      "vertical_progress_m": 1.099548101425171,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.12370419502258301,
+        0.6174633502960205,
+        0.15154814720153809
+      ],
+      "max_abs_lateral_m": 0.15709543228149414,
+      "elapsed_s": 13.6
+    },
+    {
+      "env": 40,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.306069850921631,
+      "lateral_offset_m": 0.23940467834472656,
+      "vertical_progress_m": 1.230371117591858,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.08560967445373535,
+        0.5130505561828613,
+        0.1364450454711914
+      ],
+      "max_abs_lateral_m": 0.24062204360961914,
+      "elapsed_s": 13.620000000000001
+    },
+    {
+      "env": 15,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3034939765930176,
+      "lateral_offset_m": -0.36074304580688477,
+      "vertical_progress_m": 1.0769096612930298,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.15384125709533691,
+        0.6010124683380127,
+        0.15716862678527832
+      ],
+      "max_abs_lateral_m": 0.36074304580688477,
+      "elapsed_s": 13.64
+    },
+    {
+      "env": 41,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3004491329193115,
+      "lateral_offset_m": -0.12587904930114746,
+      "vertical_progress_m": 1.2252057790756226,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.16045546531677246,
+        0.5400216579437256,
+        0.09541535377502441
+      ],
+      "max_abs_lateral_m": 0.14971160888671875,
+      "elapsed_s": 13.64
+    },
+    {
+      "env": 62,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3002471923828125,
+      "lateral_offset_m": -0.1447615623474121,
+      "vertical_progress_m": 1.2402952909469604,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.21256804466247559,
+        0.4675135612487793,
+        0.19543075561523438
+      ],
+      "max_abs_lateral_m": 0.18288803100585938,
+      "elapsed_s": 13.68
+    },
+    {
+      "env": 1,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.304823875427246,
+      "lateral_offset_m": 0.21658825874328613,
+      "vertical_progress_m": 1.0942274332046509,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.1325855255126953,
+        0.589897632598877,
+        0.10889649391174316
+      ],
+      "max_abs_lateral_m": 0.21658825874328613,
+      "elapsed_s": 13.76
+    },
+    {
+      "env": 42,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3030967712402344,
+      "lateral_offset_m": 0.18813514709472656,
+      "vertical_progress_m": 1.2441035509109497,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.10336422920227051,
+        0.4869816303253174,
+        0.09284377098083496
+      ],
+      "max_abs_lateral_m": 0.19235992431640625,
+      "elapsed_s": 13.76
+    },
+    {
+      "env": 29,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3007638454437256,
+      "lateral_offset_m": -0.2467050552368164,
+      "vertical_progress_m": 1.066159725189209,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.20990228652954102,
+        0.5564045906066895,
+        0.1354222297668457
+      ],
+      "max_abs_lateral_m": 0.2467050552368164,
+      "elapsed_s": 13.84
+    },
+    {
+      "env": 9,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3033535480499268,
+      "lateral_offset_m": -0.5606021881103516,
+      "vertical_progress_m": 1.0868372917175293,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.1791849136352539,
+        0.597705602645874,
+        0.15449023246765137
+      ],
+      "max_abs_lateral_m": 0.5606021881103516,
+      "elapsed_s": 13.86
+    },
+    {
+      "env": 52,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3018198013305664,
+      "lateral_offset_m": 0.1245718002319336,
+      "vertical_progress_m": 1.229374885559082,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.10067534446716309,
+        0.5268146991729736,
+        0.09979987144470215
+      ],
+      "max_abs_lateral_m": 0.14415264129638672,
+      "elapsed_s": 13.92
+    },
+    {
+      "env": 30,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3039538860321045,
+      "lateral_offset_m": -0.1490793228149414,
+      "vertical_progress_m": 1.1008282899856567,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.14110994338989258,
+        0.6093497276306152,
+        0.08015847206115723
+      ],
+      "max_abs_lateral_m": 0.1490793228149414,
+      "elapsed_s": 13.94
+    },
+    {
+      "env": 45,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3000295162200928,
+      "lateral_offset_m": 0.04960060119628906,
+      "vertical_progress_m": 1.2309372425079346,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.13890433311462402,
+        0.5547800064086914,
+        0.15238356590270996
+      ],
+      "max_abs_lateral_m": 0.10765886306762695,
+      "elapsed_s": 13.94
+    },
+    {
+      "env": 2,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3049404621124268,
+      "lateral_offset_m": -0.5337162017822266,
+      "vertical_progress_m": 1.0971629619598389,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.16979527473449707,
+        0.6239876747131348,
+        0.15483641624450684
+      ],
+      "max_abs_lateral_m": 0.5337162017822266,
+      "elapsed_s": 13.96
+    },
+    {
+      "env": 26,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3007075786590576,
+      "lateral_offset_m": -0.4458746910095215,
+      "vertical_progress_m": 1.0864824056625366,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.25968480110168457,
+        0.646552562713623,
+        0.24088644981384277
+      ],
+      "max_abs_lateral_m": 0.4458746910095215,
+      "elapsed_s": 13.96
+    },
+    {
+      "env": 35,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.302260637283325,
+      "lateral_offset_m": 0.07135534286499023,
+      "vertical_progress_m": 1.2281335592269897,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.22089648246765137,
+        0.5371966361999512,
+        0.09885740280151367
+      ],
+      "max_abs_lateral_m": 0.07615470886230469,
+      "elapsed_s": 13.96
+    },
+    {
+      "env": 16,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3051469326019287,
+      "lateral_offset_m": -0.30774354934692383,
+      "vertical_progress_m": 1.0902763605117798,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.19977378845214844,
+        0.5971808433532715,
+        0.18298053741455078
+      ],
+      "max_abs_lateral_m": 0.30774354934692383,
+      "elapsed_s": 14.02
+    },
+    {
+      "env": 22,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3031539916992188,
+      "lateral_offset_m": -0.12985563278198242,
+      "vertical_progress_m": 1.090003252029419,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.1437067985534668,
+        0.6072216033935547,
+        0.09215736389160156
+      ],
+      "max_abs_lateral_m": 0.14449262619018555,
+      "elapsed_s": 14.08
+    },
+    {
+      "env": 6,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.302502155303955,
+      "lateral_offset_m": -0.0646200180053711,
+      "vertical_progress_m": 1.0919609069824219,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.13105106353759766,
+        0.6524572372436523,
+        0.10862255096435547
+      ],
+      "max_abs_lateral_m": 0.080596923828125,
+      "elapsed_s": 14.120000000000001
+    },
+    {
+      "env": 11,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.301175117492676,
+      "lateral_offset_m": 0.2454667091369629,
+      "vertical_progress_m": 1.0481646060943604,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.21093201637268066,
+        0.5989415645599365,
+        0.0974581241607666
+      ],
+      "max_abs_lateral_m": 0.24627399444580078,
+      "elapsed_s": 14.120000000000001
+    },
+    {
+      "env": 24,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.301391839981079,
+      "lateral_offset_m": 0.09476447105407715,
+      "vertical_progress_m": 1.0433741807937622,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.14771389961242676,
+        0.5711236000061035,
+        0.10138535499572754
+      ],
+      "max_abs_lateral_m": 0.10130691528320312,
+      "elapsed_s": 14.26
+    },
+    {
+      "env": 19,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.300959348678589,
+      "lateral_offset_m": -0.1460556983947754,
+      "vertical_progress_m": 1.0650360584259033,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.1493053436279297,
+        0.6020247936248779,
+        0.15411591529846191
+      ],
+      "max_abs_lateral_m": 0.17048931121826172,
+      "elapsed_s": 14.280000000000001
+    },
+    {
+      "env": 49,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.303046941757202,
+      "lateral_offset_m": -0.12871170043945312,
+      "vertical_progress_m": 1.2256141901016235,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.16252374649047852,
+        0.49823713302612305,
+        0.09589266777038574
+      ],
+      "max_abs_lateral_m": 0.13910794258117676,
+      "elapsed_s": 14.32
+    },
+    {
+      "env": 36,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3035545349121094,
+      "lateral_offset_m": -0.045012712478637695,
+      "vertical_progress_m": 1.2344768047332764,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.17418503761291504,
+        0.45795226097106934,
+        0.13277220726013184
+      ],
+      "max_abs_lateral_m": 0.07697749137878418,
+      "elapsed_s": 14.44
+    },
+    {
+      "env": 14,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.301669120788574,
+      "lateral_offset_m": -0.05811166763305664,
+      "vertical_progress_m": 1.0551649332046509,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.17747282981872559,
+        0.6417195796966553,
+        0.07941651344299316
+      ],
+      "max_abs_lateral_m": 0.11158609390258789,
+      "elapsed_s": 14.56
+    },
+    {
+      "env": 59,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.301842212677002,
+      "lateral_offset_m": 0.06668329238891602,
+      "vertical_progress_m": 1.232846975326538,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.21544098854064941,
+        0.5303735733032227,
+        0.13414263725280762
+      ],
+      "max_abs_lateral_m": 0.07773542404174805,
+      "elapsed_s": 14.6
+    },
+    {
+      "env": 12,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3050103187561035,
+      "lateral_offset_m": 0.3352506160736084,
+      "vertical_progress_m": 1.093787670135498,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.23464584350585938,
+        0.6029586791992188,
+        0.14771223068237305
+      ],
+      "max_abs_lateral_m": 0.3883323669433594,
+      "elapsed_s": 15.02
+    },
+    {
+      "env": 25,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.30424165725708,
+      "lateral_offset_m": 0.15544629096984863,
+      "vertical_progress_m": 1.0543533563613892,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.23288488388061523,
+        0.611774206161499,
+        0.0887906551361084
+      ],
+      "max_abs_lateral_m": 0.15632247924804688,
+      "elapsed_s": 15.08
+    },
+    {
+      "env": 0,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3016281127929688,
+      "lateral_offset_m": -0.5487842559814453,
+      "vertical_progress_m": 1.0914418697357178,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.21815037727355957,
+        0.6249291896820068,
+        0.21488475799560547
+      ],
+      "max_abs_lateral_m": 0.5487842559814453,
+      "elapsed_s": 15.200000000000001
+    },
+    {
+      "env": 51,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.30267333984375,
+      "lateral_offset_m": 0.4362187385559082,
+      "vertical_progress_m": 1.2459672689437866,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.38344383239746094,
+        0.4878089427947998,
+        0.2561349868774414
+      ],
+      "max_abs_lateral_m": 0.4362187385559082,
+      "elapsed_s": 15.42
+    },
+    {
+      "env": 53,
+      "terrain": "down",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3034913539886475,
+      "lateral_offset_m": 0.4361538887023926,
+      "vertical_progress_m": 1.2768434286117554,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.34998130798339844,
+        0.5425550937652588,
+        0.3670661449432373
+      ],
+      "max_abs_lateral_m": 0.44491004943847656,
+      "elapsed_s": 16.22
+    },
+    {
+      "env": 21,
+      "terrain": "up",
+      "success": true,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.30469012260437,
+      "lateral_offset_m": -0.5857667922973633,
+      "vertical_progress_m": 1.0914506912231445,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.2005622386932373,
+        0.8448002338409424,
+        0.19860529899597168
+      ],
+      "max_abs_lateral_m": 0.5857667922973633,
+      "elapsed_s": 16.26
+    },
+    {
+      "env": 27,
+      "terrain": "up",
+      "success": false,
+      "physical_failure": false,
+      "base_contact": false,
+      "bad_orientation": false,
+      "progress_m": 3.3049793243408203,
+      "lateral_offset_m": -0.7609114646911621,
+      "vertical_progress_m": 1.0895566940307617,
+      "max_abs_roll_pitch_yaw_rad": [
+        0.3057291507720947,
+        0.7617983818054199,
+        0.43828272819519043
+      ],
+      "max_abs_lateral_m": 0.7609114646911621,
+      "elapsed_s": 17.400000000000002
+    }
+  ],
+  "notes": "Only the first attempt per robot counts; landing requires forward progress, vertical traversal, no physical failure, and lateral offset <0.75m. Later resets do not count.",
+  "up": {
+    "attempts": 32,
+    "successes": 31,
+    "physical_failures": 0
+  },
+  "down": {
+    "attempts": 32,
+    "successes": 31,
+    "physical_failures": 1
+  }
+}

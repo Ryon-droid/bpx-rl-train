@@ -1,4 +1,4 @@
-"""Gym registration for BPX flat-ground and mixed-terrain locomotion."""
+"""Register BPX baselines, privileged terrain teachers and blind students."""
 
 import gymnasium as gym
 

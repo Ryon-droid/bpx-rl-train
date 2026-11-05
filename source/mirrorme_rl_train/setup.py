@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 setup(
     name="mirrorme-rl-train",
     version="2.1.0",
-    description="MIRRORME RL Train Isaac Lab flat-ground locomotion framework for BPX",
+    description="BPX locomotion in Isaac Lab: PPO terrain teachers and blind history distillation",
     author="MIRRORME Technology",
     license="BSD-3-Clause",
     packages=find_packages(),

@@ -1,0 +1,222 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-05",
+  "task": "bpx_stairs17_teacher",
+  "checkpoint_iteration": 1499,
+  "actor_observations": 235,
+  "critic_observations": 235,
+  "actions": 12,
+  "blind_student_trained": false,
+  "teacher_passed": false,
+  "code_commit_used_for_training": "e6877c1547358ee720c70a5b959a627fe1b01919",
+  "source_run": "logs/bpx_stairs17_teacher/2026-11-05_17-09-17_rtx2080_stairs17_balanced_resume_20261105",
+  "initial_teacher": "15 cm focus teacher, model_1000.pt",
+  "initial_teacher_sha256": "b0307f8761a95a948b1573704a0f2011016f2b4c256fb19fdd409afcc6a58533",
+  "training": {
+    "seed": 2026,
+    "num_envs": 512,
+    "planned_iterations": 1500,
+    "learning_rate": 5e-05,
+    "resume_from_iteration": 100,
+    "additional_resume_iterations": 1400,
+    "resume_training_seconds": 1859.8,
+    "resume_restores_simulation_state": false
+  },
+  "report_prefix": "rtx2080_stairs17_balanced_resume_20261105",
+  "report_sources": [
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_nominal_backward_2026.json",
+      "original_report_sha256": "8852e45731192f91c2df44194af8ab460075796059cace84733854a7e3f7f48c"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_nominal_backward_2027.json",
+      "original_report_sha256": "c2d956efa1ae76196d80bc17124a2d1263f8d9284f246c689500a2129e3326d4"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_nominal_backward_2028.json",
+      "original_report_sha256": "99a9ecb3cd40107d26f135109954440bb1ad7752c25ec652d735fae69a71374d"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_nominal_forward_2026.json",
+      "original_report_sha256": "aa65e5a9776934770d5c349c5bc46b1dc6ca06ae40fa3b14cca10a5649485c67"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_nominal_forward_2027.json",
+      "original_report_sha256": "8567e7043c431de43577d5a3f8ed471498a6d2d2b2a9c6e4b25c5fee0fd92a75"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_nominal_forward_2028.json",
+      "original_report_sha256": "53e4d17ad658cdfd1d2ca91f8bd30913084c666e599a81927ed9da571435129b"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_qualification.json",
+      "original_report_sha256": "cec1b39ee6cccb2fafa7a99c35bc55309cb91be665de300095fc7569a95ba8ce"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_regression_0.08_backward.json",
+      "original_report_sha256": "6c54aa5d7b2d6f10ffc7f01f344bf04fe205ea19955820b3d7362a7e26392a2c"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_regression_0.08_forward.json",
+      "original_report_sha256": "68cc469f5cc7d29bec3b9be4fdc9d3e4b2d99e9d5d20aaa45693a0950c9b9a21"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_regression_0.12_backward.json",
+      "original_report_sha256": "823fb491a56891845bc199cc16e4fa04cef63a6b53266e64c17c547732421299"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_regression_0.12_forward.json",
+      "original_report_sha256": "766114e4ed94c7c56d60a0c79ffc1438b93438c6c091069c43b407f6f3c7a127"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_regression_0.15_backward.json",
+      "original_report_sha256": "981ae87089d0393c263e6fe39ac74590f9a732b7445382908dc3a0e131a769d8"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_regression_0.15_forward.json",
+      "original_report_sha256": "64b666891a9d602d443e4a77f4f44aa22fda945e909e704a9a9bb15d62a5d3e2"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_robust_backward_2026.json",
+      "original_report_sha256": "19ec165d1624b414a02e6a0b57b8720ee486559b646ec75b9c94fdd16deedc09"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_robust_backward_2027.json",
+      "original_report_sha256": "0f2e03c7b8dd754f889f2484eb1aacd51c038a4dd444660f02a1d60d2ff60b28"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_robust_backward_2028.json",
+      "original_report_sha256": "352de52c5dbd02e132de757754afa90b0fb4a02b084d1aa7edf6e2ebf8a67060"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_robust_forward_2026.json",
+      "original_report_sha256": "9be9a7132234514473d67a24fc6dc18502df7b3050f6032c28c4bfaedf0382ec"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_robust_forward_2027.json",
+      "original_report_sha256": "cd4d1672b3b7fbc308e654047888a839dedf68ab14967dc96651ec631d15c35e"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_robust_forward_2028.json",
+      "original_report_sha256": "ebe8f63a648bab9dcc1cf1d0151ca31f8fcebcbc8275bcc3fa97cb8352ca90ad"
+    }
+  ],
+  "files": [
+    {
+      "path": "pretrained/bpx_stairs17_teacher/README.md",
+      "bytes": 1735,
+      "sha256": "26ddaacc67cd72fd2908752aed07bb829a175fe996019ccdf7c912eaef6043bb"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/model_1499.pt",
+      "bytes": 5374837,
+      "sha256": "f0bacee839e61b9b90871f6440912bafa1010d4df5364e7d53f7ec23cdbb689d"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/params/agent.yaml",
+      "bytes": 1212,
+      "sha256": "08c55d7058b7310fb491e6222df524bfad69dcf87b3b96732f1b75f1fc066786"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/params/env.yaml",
+      "bytes": 40522,
+      "sha256": "c3b7e25c20b4d7ba00783fe0c4c815ed6a41ef2e060f4d68e2b240a60530cf85"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_nominal_backward_2026.json",
+      "bytes": 33396,
+      "sha256": "9feabc9dea71e67089fb19177cce422e4f6f4108395beaa5e2b7d78b50fa0550"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_nominal_backward_2027.json",
+      "bytes": 33472,
+      "sha256": "13a234ce0724709aede072c3d186a3ce45043d2aadb800f6d88a142aabf05768"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_nominal_backward_2028.json",
+      "bytes": 33457,
+      "sha256": "386147e73c770676c34a43429eb85850c6d1591feff989253a2fdc0bc69f9286"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_nominal_forward_2026.json",
+      "bytes": 33426,
+      "sha256": "1d5d72f060283fe782112a9a4b24d01d621e333a8894116c55f0ab82338375ee"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_nominal_forward_2027.json",
+      "bytes": 33424,
+      "sha256": "cd42bb449fcc843ccab0b7d648fb96a1fd4e16583fa2ef4629ddda10720d44f4"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_nominal_forward_2028.json",
+      "bytes": 33474,
+      "sha256": "6b38ff154bce51c0482dca5cb6f98e2f669e22ef99fd6680d0c7bc27aa8071f5"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_qualification.json",
+      "bytes": 2369,
+      "sha256": "f09624121a819d364f855a692c3c6f1d72a4b89a5a48e51792b12ebd22b1a794"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_regression_0.08_backward.json",
+      "bytes": 33445,
+      "sha256": "0ea952a899998a567ce98b5c90f1d703837f3ecad17ff6f38941e6ba50e06eb9"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_regression_0.08_forward.json",
+      "bytes": 33529,
+      "sha256": "78f4a56e037259b9c7998d049e94ae52642147dc96754f73f3c998186b78d3c0"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_regression_0.12_backward.json",
+      "bytes": 33432,
+      "sha256": "7944fd0b02226acfec1fede238bc4a299f7c401d8ed8c1dd48940304758aecca"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_regression_0.12_forward.json",
+      "bytes": 33517,
+      "sha256": "472c995951049d32390d17e892547c9d63008f303cee27d51ef43c9f07a1fa1b"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_regression_0.15_backward.json",
+      "bytes": 33497,
+      "sha256": "9c54e0ea3eee6cc341b64cbf3bf9d896d13b10b6fd05095369ebb1f94b81e15b"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_regression_0.15_forward.json",
+      "bytes": 33469,
+      "sha256": "a8ec62f246b34f1c92139fd9b4e8fe07bbc79522a670d6c8e6ecc4a2c9f960af"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_robust_backward_2026.json",
+      "bytes": 33427,
+      "sha256": "aa88c23dfe5b3e206f25858b589ed6e76308397531a8ff3568e07c5762b3dd25"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_robust_backward_2027.json",
+      "bytes": 33383,
+      "sha256": "87153e86e9159726cce7ce9e1e7124f119bb5ad46a448ee66e24bd514fa1db70"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_robust_backward_2028.json",
+      "bytes": 33421,
+      "sha256": "69a6774e6667019e2436558357ed18811009dbf5edfac53406d91f5c5fac696c"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_robust_forward_2026.json",
+      "bytes": 33299,
+      "sha256": "c4ed8924795589448a60a957fa67434f21d6316a1c196bf6b01c8d1074711bd0"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_robust_forward_2027.json",
+      "bytes": 33401,
+      "sha256": "1bfc43216bf7f8984fad15b01108e50324f4f184e57f929978cc32e885e20414"
+    },
+    {
+      "path": "pretrained/bpx_stairs17_teacher/reports/rtx2080_stairs17_balanced_resume_20261105_robust_forward_2028.json",
+      "bytes": 33465,
+      "sha256": "1ef4056a609b3d70033eb4a85cf19f74722bac8ad46d6a522e5a267cb267b7f0"
+    }
+  ],
+  "archive_note": "Published evaluation JSON preserves all first-attempt outcomes and aggregate counts, omitting large trajectory/initial-state/physics arrays. checkpoint is rewritten as a repository-relative path; original complete report hashes are retained. Configuration YAMLs are unmodified historical snapshots with original absolute paths."
+}

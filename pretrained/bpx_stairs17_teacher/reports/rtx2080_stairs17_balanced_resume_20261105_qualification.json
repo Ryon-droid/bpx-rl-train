@@ -1,0 +1,102 @@
+{
+  "checkpoint": "pretrained/bpx_stairs17_teacher/model_1499.pt",
+  "height_m": 0.17,
+  "seeds": [
+    2026,
+    2027,
+    2028
+  ],
+  "threshold": 0.95,
+  "rows": [
+    {
+      "condition": "nominal",
+      "direction": "forward",
+      "terrain": "up",
+      "attempts": 96,
+      "successes": 96,
+      "success_rate": 1.0,
+      "physical_failures": 0,
+      "lateral_misses": 0,
+      "passed": true
+    },
+    {
+      "condition": "nominal",
+      "direction": "forward",
+      "terrain": "down",
+      "attempts": 96,
+      "successes": 94,
+      "success_rate": 0.9791666666666666,
+      "physical_failures": 0,
+      "lateral_misses": 2,
+      "passed": true
+    },
+    {
+      "condition": "nominal",
+      "direction": "backward",
+      "terrain": "up",
+      "attempts": 96,
+      "successes": 96,
+      "success_rate": 1.0,
+      "physical_failures": 0,
+      "lateral_misses": 0,
+      "passed": true
+    },
+    {
+      "condition": "nominal",
+      "direction": "backward",
+      "terrain": "down",
+      "attempts": 96,
+      "successes": 96,
+      "success_rate": 1.0,
+      "physical_failures": 0,
+      "lateral_misses": 0,
+      "passed": true
+    },
+    {
+      "condition": "robust",
+      "direction": "forward",
+      "terrain": "up",
+      "attempts": 96,
+      "successes": 92,
+      "success_rate": 0.9583333333333334,
+      "physical_failures": 0,
+      "lateral_misses": 3,
+      "passed": true
+    },
+    {
+      "condition": "robust",
+      "direction": "forward",
+      "terrain": "down",
+      "attempts": 96,
+      "successes": 88,
+      "success_rate": 0.9166666666666666,
+      "physical_failures": 4,
+      "lateral_misses": 4,
+      "passed": false
+    },
+    {
+      "condition": "robust",
+      "direction": "backward",
+      "terrain": "up",
+      "attempts": 96,
+      "successes": 94,
+      "success_rate": 0.9791666666666666,
+      "physical_failures": 0,
+      "lateral_misses": 2,
+      "passed": true
+    },
+    {
+      "condition": "robust",
+      "direction": "backward",
+      "terrain": "down",
+      "attempts": 96,
+      "successes": 91,
+      "success_rate": 0.9479166666666666,
+      "physical_failures": 5,
+      "lateral_misses": 1,
+      "passed": false
+    }
+  ],
+  "teacher_passed": false,
+  "note": "Simulation teacher gate only; low-stair regression and blind student/real robot remain separate checks."
+}

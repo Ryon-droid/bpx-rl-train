@@ -13,6 +13,8 @@ Usage:
   ./bpx.sh play --checkpoint PATH [play args]
   ./bpx.sh mujoco --policy PATH [MuJoCo args]
   ./bpx.sh export --checkpoint PATH [export args]
+  ./bpx.sh stairs-eval --checkpoint PATH [evaluation args]
+  ./bpx.sh stairs-suite CHECKPOINT RUN_NAME OUTPUT_DIRECTORY
 EOF
 }
 
@@ -39,6 +41,12 @@ case "$command" in
     ;;
   export)
     python scripts/export_policy.py "$@"
+    ;;
+  stairs-eval)
+    python scripts/evaluate_stairs.py "$@"
+    ;;
+  stairs-suite)
+    bash scripts/evaluate_stairs17_suite.sh "$@"
     ;;
   *)
     usage
