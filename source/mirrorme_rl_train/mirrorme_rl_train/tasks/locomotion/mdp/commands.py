@@ -79,3 +79,22 @@ class StairVelocityCommand(DirectionalVelocityCommand):
     """Bias commands toward forward and backward stair traversal."""
 
     mode_fractions = (0.70, 0.10, 0.05, 0.10, 0.05)
+
+
+class FocusedStairVelocityCommand(StairVelocityCommand):
+    """Retain motion modes, with more backward descents on pyramid tiles."""
+
+    def __init__(self, cfg, env):
+        super().__init__(cfg, env)
+        self.terrain = env.scene.terrain
+
+    def _resample_command(self, env_ids):
+        super()._resample_command(env_ids)
+        velocity = self.vel_command_b[env_ids]
+        longitudinal = (velocity[:, 0] != 0) & (velocity[:, 1:] == 0).all(dim=1)
+        ids = env_ids[longitudinal]
+        # This command belongs to the 50% up / 50% down stair generator.
+        down = self.terrain.terrain_types[ids] >= self.terrain.cfg.terrain_generator.num_cols // 2
+        probability = torch.where(down, 0.80, 0.50)
+        negative = torch.rand(len(ids), device=self.device) < probability
+        self.vel_command_b[ids, 0] = self.vel_command_b[ids, 0].abs() * torch.where(negative, -1.0, 1.0)

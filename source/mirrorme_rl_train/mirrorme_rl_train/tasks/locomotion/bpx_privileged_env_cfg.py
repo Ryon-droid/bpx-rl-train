@@ -15,7 +15,8 @@ from isaaclab_tasks.manager_based.locomotion.velocity import mdp
 from .bpx_flat_env_cfg import BASE_BODY_NAME, BPXSceneCfg, ObservationsCfg
 from .bpx_rough_env_cfg import BPXRoughEnvCfg
 from .bpx_stairs_env_cfg import BPXStairsEnvCfg
-from .stair_terrain import stairs16_generator, stairs20_generator
+from .stair_terrain import stairs15_generator, stairs16_generator, stairs20_generator
+from .mdp.commands import FocusedStairVelocityCommand
 from .mdp.stairs import stair_flight_boundary, stair_levels_traversal
 
 HISTORY_LENGTH = 20  # 50 Hz control: 0.4 s, 45 values per observation.
@@ -134,4 +135,29 @@ class BPXStairs16TeacherEnvCfg(BPXStairs20TeacherEnvCfg):
 
 @configclass
 class BPXStairs16BlindEnvCfg(BPXStairs16TeacherEnvCfg):
+    observations: BPXBlindObservationsCfg = BPXBlindObservationsCfg()
+
+
+@configclass
+class BPXStairs15TeacherEnvCfg(BPXStairs20TeacherEnvCfg):
+    """Exact 4/6/8/10/12/14/15 cm tiers, with the usual traversal curriculum."""
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.scene.terrain.terrain_generator = stairs15_generator()
+
+
+@configclass
+class BPXStairs15FocusTeacherEnvCfg(BPXStairs15TeacherEnvCfg):
+    """Fine-tune a compatible pretrained teacher on its descent weakness."""
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.scene.terrain.max_init_terrain_level = 6
+        self.curriculum.terrain_levels.params["replay_fraction"] = 0.5
+        self.commands.base_velocity.class_type = FocusedStairVelocityCommand
+
+
+@configclass
+class BPXStairs15BlindEnvCfg(BPXStairs15TeacherEnvCfg):
     observations: BPXBlindObservationsCfg = BPXBlindObservationsCfg()

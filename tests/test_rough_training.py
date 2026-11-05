@@ -30,6 +30,7 @@ def load_mdp_module(name):
 commands_module = load_mdp_module("commands")
 DirectionalVelocityCommand = commands_module.DirectionalVelocityCommand
 StairVelocityCommand = commands_module.StairVelocityCommand
+FocusedStairVelocityCommand = commands_module.FocusedStairVelocityCommand
 terrain_levels_tracking = load_mdp_module("curriculums").terrain_levels_tracking
 stair_levels_traversal = load_mdp_module("stairs").stair_levels_traversal
 
@@ -101,6 +102,29 @@ class TerrainCurriculumTests(unittest.TestCase):
 class StairTraversalCurriculumTests(unittest.TestCase):
     make_env = TerrainCurriculumTests.make_env
 
+    def test_nonuniform_15cm_tiers_and_replay_origins(self):
+        env = self.make_env([[0.3, 0, 0]] * 20, [3.4] * 20, [0.02] * 20,
+                            [True] * 20, [False] * 20)
+        env.episode_length_buf = torch.full((20,), 600)
+        env.step_dt = 0.02
+        terrain = env.scene.terrain
+        generator = terrain.cfg.terrain_generator
+        generator.num_rows = 7
+        generator.sub_terrains["up"].step_height_range = (0.04, 0.15)
+        generator.sub_terrains["up"].step_heights = (0.04, 0.06, 0.08, 0.10, 0.12, 0.14, 0.15)
+        terrain.terrain_types = torch.arange(20) % 2
+        terrain.terrain_origins = torch.arange(42).reshape(7, 2, 3).float()
+        terrain.env_origins = torch.zeros(20, 3)
+        with torch.random.fork_rng():
+            torch.manual_seed(2026)
+            result = stair_levels_traversal(env, torch.arange(20), replay_fraction=1.0)
+        self.assertTrue(((terrain.terrain_levels >= 4) & (terrain.terrain_levels <= 6)).all())
+        self.assertTrue(torch.equal(terrain.env_origins, terrain.terrain_origins[
+            terrain.terrain_levels, terrain.terrain_types]))
+        expected = torch.tensor([12., 14., 15.])[terrain.terrain_levels - 4].mean().item()
+        self.assertAlmostEqual(result["mean_step_height_cm"].item(), expected, places=4)
+        self.assertIn("at_15cm_pct", result)
+
     def test_metrics_follow_16cm_curriculum_cap(self):
         env = self.make_env([[0.3, 0, 0]] * 2, [3.4] * 2, [0.02] * 2,
                             [True] * 2, [False] * 2)
@@ -139,7 +163,7 @@ class StairTraversalCurriculumTests(unittest.TestCase):
 
 class DirectionalCommandTests(unittest.TestCase):
     def make_command(self, count, command_type=DirectionalVelocityCommand):
-        command = command_type()
+        command = command_type.__new__(command_type)
         command.device = "cpu"
         command.cfg = SimpleNamespace(ranges=SimpleNamespace(
             lin_vel_x=(-0.7, 0.7), lin_vel_y=(-0.45, 0.45), ang_vel_z=(-0.8, 0.8)
@@ -148,6 +172,24 @@ class DirectionalCommandTests(unittest.TestCase):
         command.is_standing_env = torch.zeros(count, dtype=torch.bool)
         command.is_heading_env = torch.ones(count, dtype=torch.bool)
         return command
+
+    def test_focus_retains_modes_and_both_directions(self):
+        command = self.make_command(20000, FocusedStairVelocityCommand)
+        command.terrain = SimpleNamespace(terrain_types=torch.arange(20000) % 10,
+            cfg=SimpleNamespace(terrain_generator=SimpleNamespace(num_cols=10)))
+        with torch.random.fork_rng():
+            torch.manual_seed(2026)
+            command._resample_command(torch.arange(20000))
+        velocity = command.vel_command_b
+        longitudinal = (velocity[:, 0] != 0) & (velocity[:, 1:] == 0).all(dim=1)
+        self.assertAlmostEqual(longitudinal.float().mean().item(), 0.70, delta=0.015)
+        for down, probability in ((False, 0.50), (True, 0.80)):
+            mask = longitudinal & ((command.terrain.terrain_types >= 5) == down)
+            self.assertAlmostEqual((velocity[mask, 0] < 0).float().mean().item(), probability, delta=0.03)
+        self.assertAlmostEqual(command.is_standing_env.float().mean().item(), 0.05, delta=0.01)
+        before = velocity.clone()
+        command._resample_command(torch.tensor([], dtype=torch.long))
+        self.assertTrue(torch.equal(before, velocity))
 
     def test_modes_bounds_and_sign_balance(self):
         command = self.make_command(20000)

@@ -9,7 +9,7 @@ def stair_flight_boundary(env, distance: float = 3.3):
     return delta.abs().amax(dim=1) >= distance
 
 
-def stair_levels_traversal(env, env_ids, distance: float = 3.3):
+def stair_levels_traversal(env, env_ids, distance: float = 3.3, replay_fraction: float = 0.0):
     terrain = env.scene.terrain
     command = env.command_manager.get_term("base_velocity")
     speed = command.command[env_ids, :2].norm(dim=1)
@@ -28,13 +28,25 @@ def stair_levels_traversal(env, env_ids, distance: float = 3.3):
     up = moving & completed & timed_out & ~failed & reached_landing & acceptable
     down = moving & completed & (failed | (timed_out & ~reached_landing)) & ~up
     terrain.update_env_origins(env_ids, up, down)
+    # A pretrained teacher can revisit hard flights even after a failed reset.
+    # The other resets retain the ordinary success/failure curriculum.
+    if replay_fraction:
+        replay_ids = env_ids[torch.rand(len(env_ids), device=env_ids.device) < replay_fraction]
+        top = terrain.cfg.terrain_generator.num_rows
+        terrain.terrain_levels[replay_ids] = torch.randint(top - 3, top, (len(replay_ids),), device=env_ids.device)
+        terrain.env_origins[replay_ids] = terrain.terrain_origins[
+            terrain.terrain_levels[replay_ids], terrain.terrain_types[replay_ids]]
     levels = terrain.terrain_levels.float()
     generator = terrain.cfg.terrain_generator
-    low, high = next(iter(generator.sub_terrains.values())).step_height_range
+    term = next(iter(generator.sub_terrains.values()))
+    low, high = term.step_height_range
     top_level = generator.num_rows - 1
+    heights = (torch.tensor(term.step_heights, device=levels.device)
+               if getattr(term, "step_heights", None) is not None
+               else torch.linspace(low, high, generator.num_rows, device=levels.device))
     return {
         "mean_level": levels.mean(),
-        "mean_step_height_cm": 100.0 * (low + (high - low) * levels.mean() / top_level),
+        "mean_step_height_cm": 100.0 * heights[terrain.terrain_levels].mean(),
         f"at_{round(high * 100)}cm_pct": 100.0 * (levels == top_level).float().mean(),
         "promoted_pct": 100.0 * up.sum() / moving.sum().clamp(min=1),
     }

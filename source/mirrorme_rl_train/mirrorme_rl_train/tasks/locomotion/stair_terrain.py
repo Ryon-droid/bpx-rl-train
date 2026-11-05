@@ -12,7 +12,8 @@ def tiered_stairs(difficulty, cfg):
     # row really contains the configured maximum riser height.
     level = min(cfg.num_levels - 1, max(0, math.floor(difficulty * cfg.num_levels)))
     low, high = cfg.step_height_range
-    height = low + (high - low) * level / (cfg.num_levels - 1)
+    height = (cfg.step_heights[level] if cfg.step_heights is not None
+              else low + (high - low) * level / (cfg.num_levels - 1))
     fixed = cfg.replace(step_height_range=(height, height))
     generate = inverted_pyramid_stairs_terrain if cfg.inverted else pyramid_stairs_terrain
     return generate(0.0, fixed)
@@ -23,6 +24,7 @@ class TieredStairsTerrainCfg(terrains.MeshPyramidStairsTerrainCfg):
     function = tiered_stairs
     num_levels: int = 9
     inverted: bool = False
+    step_heights: tuple[float, ...] | None = None
 
 
 def stairs20_generator():
@@ -33,9 +35,18 @@ def stairs16_generator():
     return stair_generator(max_height=0.16, num_levels=7)
 
 
-def stair_generator(*, max_height, num_levels):
+def stairs15_generator():
+    return stair_generator(max_height=0.15, num_levels=7,
+                           step_heights=(0.04, 0.06, 0.08, 0.10, 0.12, 0.14, 0.15))
+
+
+def stair_generator(*, max_height, num_levels, step_heights=None):
+    if step_heights is not None and (len(step_heights) != num_levels or
+                                     step_heights[0] != 0.04 or step_heights[-1] != max_height or
+                                     any(a >= b for a, b in zip(step_heights, step_heights[1:]))):
+        raise ValueError("Explicit stair heights must be increasing and match the configured range and rows")
     common = dict(step_height_range=(0.04, max_height), num_levels=num_levels, step_width=0.30,
-                  platform_width=3.0, border_width=1.0, holes=False)
+                  platform_width=3.0, border_width=1.0, holes=False, step_heights=step_heights)
     return terrains.TerrainGeneratorCfg(
         size=(8.0, 8.0), border_width=10.0, num_rows=num_levels, num_cols=10,
         curriculum=True, use_cache=False, color_scheme="height",
