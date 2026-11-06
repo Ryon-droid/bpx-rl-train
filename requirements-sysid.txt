@@ -1,0 +1,6 @@
+# Optional offline identification tools; do not upgrade the Isaac/PyTorch stack.
+numpy>=1.26
+mujoco==3.3.7
+cmaes==0.12.0
+# State-only hardware capture additionally requires the vendor bpx-sdk-open wheel
+# matching the capture computer's CPU architecture and Python ABI (import bpx_sdk).

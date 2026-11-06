@@ -15,6 +15,8 @@ Usage:
   ./bpx.sh export --checkpoint PATH [export args]
   ./bpx.sh stairs-eval --checkpoint PATH [evaluation args]
   ./bpx.sh stairs-suite CHECKPOINT RUN_NAME OUTPUT_DIRECTORY
+  ./bpx.sh sysid [plan|synthetic|collect-readonly|prepare|inspect|fit|replay] [args]
+  ./bpx.sh sysid-isaac [PhysX identification args]
 EOF
 }
 
@@ -44,6 +46,12 @@ case "$command" in
     ;;
   stairs-eval)
     python scripts/evaluate_stairs.py "$@"
+    ;;
+  sysid)
+    python scripts/sysid.py "$@"
+    ;;
+  sysid-isaac)
+    python scripts/sysid_isaac.py "$@"
     ;;
   stairs-suite)
     bash scripts/evaluate_stairs17_suite.sh "$@"

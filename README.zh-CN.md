@@ -155,3 +155,7 @@ python -m unittest discover -s tests -v
 - Rudin等，*Learning to Walk in Minutes Using Massively Parallel Deep Reinforcement Learning*，CoRL，2021。
 
 2026-11-06 更新检查：33 项测试全部通过；GPU 已验证实际关节限制、动作限幅及 20 轮训练短跑。新限制下正式训练已暂停在第 600 轮存档，未完成能力评估，该检查点未包含在仓库中。
+
+## 参数辨识软件准备
+
+[PACE 思路下的 BPX 工具与吊架调试流程](docs/bpx-sysid-preparation.zh-CN.md)：离线扫频、只读 SDK 采集、数据检查、MuJoCo/PhysX 固定机身重放、49 维 CMA-ES 与独立验证。实机扫频下发及高频接收侧日志仍需吊架完成后联调，尚无实机辨识结果。原强化学习训练保持暂停。

@@ -156,3 +156,7 @@ Built on MIRRORME BPX assets and the original training project. Original attribu
 - Rudin et al., *Learning to Walk in Minutes Using Massively Parallel Deep Reinforcement Learning*, CoRL, 2021.
 
 November 6 validation: all 33 tests passed; GPU checks verified actual joint limits, processed action clipping and a 20-iteration training smoke run. The formal run under the new limits is paused with iteration 600 preserved; capability evaluation is incomplete and that checkpoint is not included in this repository.
+
+## Identification preparation
+
+[BPX identification tools and rig commissioning guide (Chinese)](docs/bpx-sysid-preparation.zh-CN.md): offline chirps, state-only SDK capture, data checks, fixed-base MuJoCo/PhysX replay and 49-D CMA-ES. Hardware excitation and receiver-side high-rate logging still require commissioning after the rig is ready. No hardware identification results are claimed; locomotion training remains paused.

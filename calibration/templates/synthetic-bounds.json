@@ -1,0 +1,10 @@
+{
+  "synthetic_only": true,
+  "basis": "Software test bounds only; NOT measured BPX bounds or approved hardware limits.",
+  "joint_order": "bpx_type_major",
+  "armature_kg_m2": [0.001, 0.02],
+  "viscous_nm_s_rad": [0.0, 0.3],
+  "coulomb_nm": [0.0, 0.15],
+  "encoder_bias_rad": [-0.03, 0.03],
+  "delay_steps": [0, 8]
+}
