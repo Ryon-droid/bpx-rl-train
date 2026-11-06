@@ -27,13 +27,16 @@ class DirectionalVelocityCommand(UniformVelocityCommand):
         return magnitude * sign
 
     def _resample_command(self, env_ids: Sequence[int]):
+        self._resample_modes(env_ids, self.mode_fractions)
+
+    def _resample_modes(self, env_ids: Sequence[int], fractions):
         count = len(env_ids)
         if count == 0:
             return
 
         self.vel_command_b[env_ids] = 0.0
         mode = torch.rand(count, device=self.device)
-        longitudinal_fraction, lateral_fraction, yaw_fraction, combined_fraction, _ = self.mode_fractions
+        longitudinal_fraction, lateral_fraction, yaw_fraction, combined_fraction, _ = fractions
         longitudinal_end = longitudinal_fraction
         lateral_end = longitudinal_end + lateral_fraction
         yaw_end = lateral_end + yaw_fraction
@@ -79,6 +82,23 @@ class StairVelocityCommand(DirectionalVelocityCommand):
     """Bias commands toward forward and backward stair traversal."""
 
     mode_fractions = (0.70, 0.10, 0.05, 0.10, 0.05)
+
+
+class RepairStairVelocityCommand(StairVelocityCommand):
+    """Keep stair practice and emphasize lateral/yaw commands on flat tiles."""
+
+    flat_column_start = 8  # Repair generator: four up, four down, four flat columns.
+    flat_mode_fractions = (0.10, 0.35, 0.35, 0.10, 0.10)
+
+    def __init__(self, cfg, env):
+        super().__init__(cfg, env)
+        self.terrain = env.scene.terrain
+
+    def _resample_command(self, env_ids):
+        env_ids = torch.as_tensor(env_ids, dtype=torch.long, device=self.device)
+        flat = self.terrain.terrain_types[env_ids] >= self.flat_column_start
+        self._resample_modes(env_ids[~flat], self.mode_fractions)
+        self._resample_modes(env_ids[flat], self.flat_mode_fractions)
 
 
 class FocusedStairVelocityCommand(StairVelocityCommand):

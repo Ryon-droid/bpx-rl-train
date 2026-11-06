@@ -4,12 +4,16 @@
 
 An Isaac Lab / RSL-RL locomotion project based on MIRRORME BPX. The goal is to **use privileged terrain information during training and deploy a camera-free policy**. The current terrain target is **17 cm risers with 30 cm treads**, traversed forward and backward, uphill and downhill.
 
-## Current status — November 5, 2026
+## Motor specification update — November 6, 2026
+
+Hip/knee peak effort limits now use 20/40 Nm. Rated speeds of 12/10 rad/s are used as conservative operating caps, not measured maximum speeds. Position targets are clipped to the URDF angle ranges. See the [specification audit and remaining identification work](docs/bpx-motor-spec-alignment.zh-CN.md). Published checkpoints and results below used uniform 30 Nm / 20 rad/s; they are not qualification results under the new hardware profile. The first 3,000-iteration blind student completed but failed qualification; teacher repair and motor adaptation have been paused at the user’s request, with the iteration-600 checkpoint preserved. No robot deployment has occurred.
+
+## Published experiment — November 5, 2026, legacy motor limits
 
 - A **235-D PPO teacher** completed this 1,500-iteration fine-tuning trial and the full evaluation suite.
 - The [iteration-1499 teacher checkpoint, configuration snapshots, per-attempt outcomes and SHA-256 manifest](pretrained/bpx_stairs17_teacher/) are included in ordinary Git; no Git LFS is required.
 - The teacher **has not passed every robustness target**: forward descent is 91.7%, backward descent 94.8%, below the 95% per-mode gate.
-- The **900-D blind-student pipeline** has passed interface and short workflow checks. Formal student training and robot deployment remain pending. The included teacher requires terrain input and is not a camera-free deployment policy.
+- The first **900-D blind student** completed training and evaluation but failed qualification. Teacher repair, motor adaptation and student improvement remain in progress. The included teacher requires terrain input and is not a camera-free deployment policy.
 
 | 17 cm traversal | Nominal | Noise + physics variation + pushes | Physical failures under perturbations |
 |---|---:|---:|---:|
@@ -37,7 +41,7 @@ Deployment goal: 20 proprioceptive frames → blind student (900-D) → 12 joint
 | Policy | Task | Action-network input | Status |
 |---|---|---|---|
 | Current teacher | `bpx_stairs17_teacher` | 235-D | Trained; robust descent needs improvement |
-| Blind student | `bpx_stairs17_blind` | 900-D | Pipeline checked; formal training pending |
+| Blind student | `bpx_stairs17_blind` | 900-D | First run complete; qualification failed |
 | Original baselines | `bpx_flat`, `bpx_rough`, `bpx_stairs` | Actor 45-D; critic 48-D | Retained for comparison |
 
 The 45-D frame contains angular velocity (3), projected gravity (3), velocity commands (3), joint position offsets (12), joint velocities (12) and previous actions (12). Extra teacher inputs are simulator ground truth, not camera images. Friction, mass and contact forces are not additional policy inputs in this implementation; they participate in physics randomization, rewards or termination checks.
@@ -97,10 +101,11 @@ python scripts/summarize_stair_suite.py \
 ## Resume training and later distillation
 
 ```bash
-./bpx.sh train --task bpx_stairs17_teacher --resume \
-  --checkpoint pretrained/bpx_stairs17_teacher/model_1499.pt \
-  --num_envs 512 --max_iterations 500 --seed 2026 \
-  --run_name stairs17_resume --headless --device cuda:0
+# Initialize a new motor-profile repair run with fresh optimizer and counter.
+./bpx.sh train --task bpx_stairs17_repair_teacher \
+  --init_checkpoint pretrained/bpx_stairs17_teacher/model_1499.pt \
+  --num_envs 512 --max_iterations 1500 --seed 2026 \
+  --run_name stairs17_motor_repair --headless --device cuda:0
 ```
 
 `--max_iterations` is an **additional iteration budget**. Resume restores weights, optimizer and iteration counter, but not simulation state, curriculum state or RNG state. `--init_checkpoint` starts a new compatible PPO run with fresh optimizer and counter. YAML files are historical snapshots; scripts load registered Python configurations, not adjacent YAML automatically. See the [17 cm training guide](docs/bpx-stairs17-training.zh-CN.md).
@@ -149,3 +154,5 @@ Built on MIRRORME BPX assets and the original training project. Original attribu
 - [Isaac Lab 2.3.0](https://isaac-sim.github.io/IsaacLab/v2.3.0/source/setup/installation/index.html)
 - Lee et al., *Learning Quadrupedal Locomotion over Challenging Terrain*, Science Robotics, 2020.
 - Rudin et al., *Learning to Walk in Minutes Using Massively Parallel Deep Reinforcement Learning*, CoRL, 2021.
+
+November 6 validation: all 33 tests passed; GPU checks verified actual joint limits, processed action clipping and a 20-iteration training smoke run. The formal run under the new limits is paused with iteration 600 preserved; capability evaluation is incomplete and that checkpoint is not included in this repository.

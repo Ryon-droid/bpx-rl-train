@@ -13,12 +13,13 @@ import torch
 def load_mdp_module(name):
     stubs = {key: ModuleType(key) for key in (
         "isaaclab", "isaaclab.assets", "isaaclab.managers", "isaaclab.terrains",
-        "isaaclab.envs", "isaaclab.envs.mdp", "isaaclab.envs.mdp.commands",
+        "isaaclab.envs", "isaaclab.envs.mdp", "isaaclab.envs.mdp.commands", "isaaclab.sensors",
     )}
     stubs["isaaclab.assets"].Articulation = object
     stubs["isaaclab.terrains"].TerrainImporter = object
     stubs["isaaclab.managers"].SceneEntityCfg = lambda name: SimpleNamespace(name=name)
     stubs["isaaclab.envs.mdp.commands"].UniformVelocityCommand = object
+    stubs["isaaclab.sensors"].ContactSensor = object
     path = Path(__file__).resolve().parents[1] / "source/mirrorme_rl_train/mirrorme_rl_train/tasks/locomotion/mdp"
     spec = importlib.util.spec_from_file_location(f"rough_test_{name}", path / f"{name}.py")
     module = importlib.util.module_from_spec(spec)
@@ -34,6 +35,7 @@ FocusedStairVelocityCommand = commands_module.FocusedStairVelocityCommand
 terrain_levels_tracking = load_mdp_module("curriculums").terrain_levels_tracking
 stairs_module = load_mdp_module("stairs")
 stair_levels_traversal = stairs_module.stair_levels_traversal
+rewards_module = load_mdp_module("rewards")
 
 
 class TerrainCurriculumTests(unittest.TestCase):
@@ -102,6 +104,30 @@ class TerrainCurriculumTests(unittest.TestCase):
 
 class StairTraversalCurriculumTests(unittest.TestCase):
     make_env = TerrainCurriculumTests.make_env
+
+    def test_repair_replay_never_moves_flat_origins_or_levels(self):
+        env = self.make_env([[0.3, 0, 0]] * 4, [3.4] * 4, [0.02] * 4,
+                            [True] * 4, [False] * 4)
+        env.episode_length_buf = torch.full((4,), 600)
+        env.step_dt = .02
+        t = env.scene.terrain
+        t.terrain_types = torch.tensor([0, 7, 8, 11])
+        t.terrain_levels = torch.tensor([0, 7, 2, 3])
+        t.terrain_origins = torch.arange(8 * 12 * 3).reshape(8, 12, 3).float()
+        t.env_origins = torch.zeros(4, 3)
+        g = t.cfg.terrain_generator
+        g.num_rows = 8
+        g.sub_terrains['up'].step_heights = (.04, .06, .08, .10, .12, .14, .16, .17)
+        g.sub_terrains['up'].step_height_range = (.04, .17)
+        result = stairs_module.repair_stair_levels_traversal(env, torch.arange(4), replay_fraction=1.)
+        self.assertEqual(t.update_env_origins.call_args.args[0].tolist(), [0, 1])
+        self.assertEqual(t.terrain_levels[2:].tolist(), [2, 3])
+        self.assertTrue((t.env_origins[2:] == 0).all())
+        self.assertEqual(result['flat_environment_pct'], 50)
+        # A reset containing only flat tiles must also leave their data intact.
+        stairs_module.repair_stair_levels_traversal(env, torch.tensor([2, 3]), replay_fraction=1.)
+        self.assertEqual(t.update_env_origins.call_args.args[0].numel(), 0)
+        self.assertEqual(t.terrain_levels[2:].tolist(), [2, 3])
 
     def test_direction_and_lateral_drift_gate_only_pure_longitudinal(self):
         env = self.make_env([[0.3, 0, 0], [-0.3, 0, 0], [-0.3, 0, 0],
@@ -200,6 +226,48 @@ class DirectionalCommandTests(unittest.TestCase):
         command.is_standing_env = torch.zeros(count, dtype=torch.bool)
         command.is_heading_env = torch.ones(count, dtype=torch.bool)
         return command
+
+    def test_repair_modes_depend_on_terrain_and_preserve_non_reset_commands(self):
+        c = self.make_command(40000, commands_module.RepairStairVelocityCommand)
+        c.terrain = SimpleNamespace(terrain_types=torch.cat((torch.zeros(20000, dtype=torch.long),
+                                                           torch.full((20000,), 8))))
+        with torch.random.fork_rng():
+            torch.manual_seed(2026)
+            c._resample_command(torch.arange(40000))
+        for sl, fractions in ((slice(0, 20000), c.mode_fractions), (slice(20000, 40000), c.flat_mode_fractions)):
+            a = c.vel_command_b[sl] != 0
+            masks = (a[:, 0] & ~a[:, 1] & ~a[:, 2], ~a[:, 0] & a[:, 1] & ~a[:, 2],
+                     ~a[:, 0] & ~a[:, 1] & a[:, 2], a.all(dim=1), ~a.any(dim=1))
+            for mask, target in zip(masks, fractions):
+                self.assertAlmostEqual(mask.float().mean().item(), target, delta=.015)
+            self.assertTrue(torch.equal(c.is_standing_env[sl], masks[-1]))
+        before = c.vel_command_b.clone()
+        c._resample_command(torch.tensor([0, 20000]))
+        self.assertTrue(torch.equal(c.vel_command_b[1:20000], before[1:20000]))
+        self.assertTrue(torch.equal(c.vel_command_b[20001:], before[20001:]))
+        c._resample_command([])
+
+    def test_low_motion_commands_disable_stand_penalty_and_enable_air_reward(self):
+        command = torch.tensor([[0., 0., 0.], [0., .10, 0.], [0., 0., .25]])
+        robot = SimpleNamespace(data=SimpleNamespace(joint_pos=torch.ones(3, 12),
+                                                     default_joint_pos=torch.zeros(3, 12)))
+        sensor = SimpleNamespace(compute_first_contact=lambda dt: torch.ones(3, 4),
+                                 data=SimpleNamespace(last_air_time=torch.ones(3, 4)))
+        class Scene(dict):
+            pass
+        scene = Scene(robot=robot)
+        scene.sensors = {'contact_forces': sensor}
+        env = SimpleNamespace(scene=scene, step_dt=.02,
+                              command_manager=SimpleNamespace(get_command=lambda name: command))
+        robot_cfg = SimpleNamespace(name='robot', joint_ids=slice(None))
+        sensor_cfg = SimpleNamespace(name='contact_forces', body_ids=slice(None))
+        old = rewards_module.stand_still_joint_deviation_l1(env, 'base_velocity', command_threshold=.15, asset_cfg=robot_cfg)
+        new = rewards_module.stand_still_joint_deviation_l1(env, 'base_velocity', command_threshold=.08, asset_cfg=robot_cfg)
+        self.assertEqual(old.tolist(), [12., 12., 12.])
+        self.assertEqual(new.tolist(), [12., 0., 0.])
+        air = rewards_module.quadruped_feet_air_time(env, 'base_velocity', sensor_cfg, threshold=.35,
+                                                   command_threshold=.08)
+        self.assertEqual((air > 0).tolist(), [False, True, True])
 
     def test_focus_retains_modes_and_both_directions(self):
         command = self.make_command(20000, FocusedStairVelocityCommand)

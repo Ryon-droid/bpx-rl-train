@@ -1,5 +1,7 @@
 # 16 厘米台阶训练
 
+> 历史配置说明：本文中的统一 30 N·m / 20 rad/s 为原实验参数。2026-11-06 运行配置已按电机规格更正；本文历史结果不改写，详见[电机规格核对](bpx-motor-spec-alignment.zh-CN.md)。
+
 2026-11-05：当前目标已改为 [17 cm 台阶](bpx-stairs17-training.zh-CN.md)。以下为历史16 cm方案。
 
 历史目标为 **16 cm**。使用 `bpx_stairs16_teacher` 训练感知教师，评估合格后使用 `bpx_stairs16_blind` 蒸馏盲学生。

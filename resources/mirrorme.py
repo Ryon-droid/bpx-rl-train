@@ -8,6 +8,7 @@ from pathlib import Path
 import isaaclab.sim as sim_utils
 from isaaclab.actuators import ImplicitActuatorCfg
 from isaaclab.assets import ArticulationCfg
+from bpx_hardware import actuator_limits
 
 
 def _asset_root() -> Path:
@@ -85,7 +86,8 @@ BPX_CFG = ArticulationCfg(
                 "hl_knee_joint",
                 "hr_knee_joint",
             ],
-            effort_limit_sim=30.0,
+            effort_limit_sim=actuator_limits('peak_torque_nm'),
+            velocity_limit_sim=actuator_limits('rated_speed_rad_s'),
             stiffness=30.0,
             damping=1.0,
             armature=0.003,

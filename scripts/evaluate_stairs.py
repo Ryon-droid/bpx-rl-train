@@ -163,7 +163,10 @@ def main():
             break
     if not bool(finished.all()):
         raise RuntimeError("evaluation ended before all first attempts were recorded")
+    from bpx_hardware import hardware_contract
+    from resources.mirrorme import BPX_URDF_PATH
     report = {"checkpoint": str(Path(args.checkpoint).resolve()), "task": args.task,
+              "hardware_contract": hardware_contract(BPX_URDF_PATH),
               "height_m": args.step_height, "tread_m": 0.30, "seed": args.seed, "speed_m_s": direction * args.speed,
               "robust": args.condition == "robust", "condition": args.condition,
               "episode_budget_s": cfg.episode_length_s,

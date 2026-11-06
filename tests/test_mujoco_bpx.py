@@ -9,7 +9,7 @@ import mujoco
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from mujoco_bpx import BPXSimulation, DEFAULT_JOINT_POS, JOINT_NAMES, PROJECT_ROOT, rpy_quaternion
+from mujoco_bpx import BPXSimulation, DEFAULT_JOINT_POS, JOINT_NAMES, PROJECT_ROOT, TORQUE_LIMIT, SPEED_LIMIT, rpy_quaternion
 from play_mujoco import PhaseMetrics
 
 
@@ -73,18 +73,46 @@ class MuJoCoBPXTests(unittest.TestCase):
     def test_action_clip_torque_limit_and_finite_integration(self):
         sim = self.sim
         torque = sim.step(np.full(12, 200.0))
-        self.assertLessEqual(torque, 30)
-        np.testing.assert_allclose(sim.target, DEFAULT_JOINT_POS + 25)
+        self.assertLessEqual(torque, 40)
+        np.testing.assert_allclose(sim.target, np.array([0.8727] * 4 + [2.60661] * 4 + [-0.5539] * 4))
         np.testing.assert_allclose(sim.observation([0, 0, 0])[33:], 100)
         sim.reset()
         for _ in range(250):
-            self.assertLessEqual(sim.step(np.zeros(12)), 30)
+            self.assertLessEqual(sim.step(np.zeros(12)), 40)
         self.assertAlmostEqual(sim.data.time, 5.0)
         self.assertTrue(np.isfinite(sim.data.qpos).all())
         self.assertTrue(np.isfinite(sim.data.qvel).all())
         before = sim.data.qvel[:2].copy()
         sim.push([0.3, -0.2])
         np.testing.assert_allclose(sim.data.qvel[:2], before + [0.3, -0.2])
+
+    def test_per_joint_peak_limits_and_overspeed_braking(self):
+        sim = self.sim
+        expected = np.array([20.] * 8 + [40.] * 4)
+        np.testing.assert_array_equal(TORQUE_LIMIT, expected)
+        np.testing.assert_array_equal(SPEED_LIMIT, [12.] * 8 + [10.] * 4)
+        np.testing.assert_array_equal(sim.model.actuator_ctrlrange[:, 1], expected)
+        np.testing.assert_array_equal(sim.clip_motor_torque(np.full(12, 100.), np.zeros(12)), expected)
+        np.testing.assert_array_equal(sim.clip_motor_torque(np.full(12, -100.), np.zeros(12)), -expected)
+        np.testing.assert_array_equal(sim.clip_motor_torque(expected, SPEED_LIMIT), np.zeros(12))
+        np.testing.assert_array_equal(sim.clip_motor_torque(-expected, -SPEED_LIMIT), np.zeros(12))
+        np.testing.assert_array_equal(sim.clip_motor_torque(-expected, SPEED_LIMIT * 2), -expected)
+        np.testing.assert_array_equal(sim.clip_motor_torque(expected, -SPEED_LIMIT * 2), expected)
+
+    def test_urdf_angles_match_position_targets_and_motor_effort_metadata(self):
+        sim = self.sim
+        root = ET.parse(PROJECT_ROOT / 'resources/BPX/bpx/urdf/bpx.urdf').getroot()
+        limits = {j.get('name'): j.find('limit') for j in root.findall('joint')}
+        expected_angles = np.array([[-.8727, .8727]] * 4 + [[-.7854, 2.60661]] * 4 + [[-2.7531, -.5539]] * 4)
+        np.testing.assert_allclose(sim.position_limits, expected_angles)
+        for i, name in enumerate(JOINT_NAMES):
+            self.assertEqual(float(limits[name].get('effort')), TORQUE_LIMIT[i])
+            self.assertEqual(float(limits[name].get('velocity')), SPEED_LIMIT[i])
+        sim.step(np.full(12, -200.))
+        np.testing.assert_allclose(sim.target, expected_angles[:, 0])
+        sim.reset()
+        sim.step(np.zeros(12))
+        np.testing.assert_allclose(sim.target, DEFAULT_JOINT_POS)
 
     def test_terminal_metrics_survive_reset_and_warmup(self):
         sim = self.sim

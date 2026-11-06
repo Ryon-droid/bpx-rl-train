@@ -36,6 +36,17 @@ gym.register(
 )
 
 
+gym.register(
+    id="bpx_stairs17_repair_teacher",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"{__name__}.bpx_repair_env_cfg:BPXStairs17RepairTeacherEnvCfg",
+        "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:BPXStairs17RepairTeacherPPORunnerCfg",
+    },
+)
+
+
 for task_id, env_class, runner_class in (
     ("bpx_rough_teacher", "BPXRoughTeacherEnvCfg", "BPXRoughTeacherPPORunnerCfg"),
     ("bpx_stairs_teacher", "BPXStairsTeacherEnvCfg", "BPXStairsTeacherPPORunnerCfg"),

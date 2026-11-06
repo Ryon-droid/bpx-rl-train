@@ -4,12 +4,16 @@
 
 基于 MIRRORME BPX 模型、Isaac Lab 和 RSL-RL，研究**训练时利用地形特权信息、部署时不依赖相机**的四足运动控制。当前目标是 **17 cm 台阶、30 cm 踏面**，支持前进/倒退上楼和下楼。
 
-## 当前进展（2026-11-05）
+## 电机参数更新（2026-11-06）
+
+已根据产品规格将髋关节/膝关节峰值扭矩改为 20/40 N·m，并采用额定转速 12/10 rad/s 作为保守训练上限；关节角度和最终位置目标限幅以 URDF 为准。[核对依据、实施细节和未辨识参数](docs/bpx-motor-spec-alignment.zh-CN.md)。下列发布模型及成绩采用旧的统一 30 N·m / 20 rad/s，不能作为新限制下的成绩。首轮 3000 轮盲学生已完成但未达标，老师修复与新限制适配训练已按用户要求暂停，保留第 600 轮检查点；尚未部署实机。
+
+## 已发布实验（2026-11-05，旧电机限制）
 
 - **已完成**：235维地形教师 PPO 训练、本轮1500次迭代，以及17cm三种子常规/扰动测试和低台阶回归。
 - **已提供**：[第1499轮教师权重、配置、逐次测试结果和校验清单](pretrained/bpx_stairs17_teacher/)。普通 Git 克隆即可获取，无需 Git LFS。
 - **尚未达标**：扰动条件下前进下楼91.7%、倒退下楼94.8%，低于每项至少95%的教师目标。
-- **后续阶段**：900维本体历史盲学生的训练、评估与导出流程已实现并做过短流程验证，**正式学生尚未训练，实机能力尚未验证**。当前教师不能直接作为无相机部署策略。
+- **后续阶段**：900维本体历史盲学生首轮已训练评估但未达标；老师修复、新电机限制适配与学生强化继续进行，实机能力尚未验证。当前教师不能直接作为无相机部署策略。
 
 | 17cm测试动作 | 常规条件 | 噪声＋物理变化＋推扰 | 扰动下物理失败 |
 |---|---:|---:|---:|
@@ -37,7 +41,7 @@
 | 策略 | 任务 | 动作网络输入 | 状态 |
 |---|---|---|---|
 | 当前教师 | `bpx_stairs17_teacher` | 45＋3＋187＝235维 | 已训练，抗扰动下楼待改进 |
-| 目标盲学生 | `bpx_stairs17_blind` | 45×20＝900维 | 流程已验证，正式训练待进行 |
+| 目标盲学生 | `bpx_stairs17_blind` | 45×20＝900维 | 首轮已完成，尚未达标 |
 | 原始基线 | `bpx_flat` / `bpx_rough` / `bpx_stairs` | Actor 45维，Critic 48维 | 保留用于对照 |
 
 本体45维依次为机身角速度3、重力方向3、速度指令3、关节相对位置12、关节速度12、上一动作12。教师的额外输入为仿真真值；187点高度扫描不是实际相机画面，摩擦/质量/接触力也没有额外拼入当前教师策略输入。它们用于物理随机化、奖励或终止判定。
@@ -96,11 +100,11 @@ python scripts/summarize_stair_suite.py \
 ## 继续训练与后续蒸馏
 
 ```bash
-# 从当前教师继续PPO训练，恢复模型、优化器和迭代编号。
-./bpx.sh train --task bpx_stairs17_teacher --resume \
-  --checkpoint pretrained/bpx_stairs17_teacher/model_1499.pt \
-  --num_envs 512 --max_iterations 500 --seed 2026 \
-  --run_name stairs17_resume --headless --device cuda:0
+# 从发布权重初始化新电机限制下的修复任务（新优化器、重新计数）。
+./bpx.sh train --task bpx_stairs17_repair_teacher \
+  --init_checkpoint pretrained/bpx_stairs17_teacher/model_1499.pt \
+  --num_envs 512 --max_iterations 1500 --seed 2026 \
+  --run_name stairs17_motor_repair --headless --device cuda:0
 ```
 
 `--max_iterations`是**追加迭代数**；`--resume`不恢复仿真状态、课程进度或随机数状态。`--init_checkpoint`则只初始化兼容权重并重新计数、重建优化器。随附YAML是历史快照，运行时实际读取注册的Python配置，不会自动加载模型旁的YAML。完整训练流程见[17cm训练说明](docs/bpx-stairs17-training.zh-CN.md)。
@@ -149,3 +153,5 @@ python -m unittest discover -s tests -v
 - [Isaac Lab 2.3.0](https://isaac-sim.github.io/IsaacLab/v2.3.0/source/setup/installation/index.html)
 - Lee等，*Learning Quadrupedal Locomotion over Challenging Terrain*，Science Robotics，2020。
 - Rudin等，*Learning to Walk in Minutes Using Massively Parallel Deep Reinforcement Learning*，CoRL，2021。
+
+2026-11-06 更新检查：33 项测试全部通过；GPU 已验证实际关节限制、动作限幅及 20 轮训练短跑。新限制下正式训练已暂停在第 600 轮存档，未完成能力评估，该检查点未包含在仓库中。

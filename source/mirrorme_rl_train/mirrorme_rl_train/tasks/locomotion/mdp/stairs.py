@@ -58,6 +58,25 @@ def stair_levels_traversal(env, env_ids, distance: float = 3.3, replay_fraction:
     }
 
 
+def repair_stair_levels_traversal(env, env_ids, flat_column_start: int = 8, distance: float = 3.3,
+                                replay_fraction: float = 0.0, require_straight_progress: bool = False):
+    """Apply stair progress/replay only to stair tiles in the repair task."""
+    terrain = env.scene.terrain
+    env_ids = torch.as_tensor(env_ids, dtype=torch.long, device=terrain.terrain_types.device)
+    stair_ids = env_ids[terrain.terrain_types[env_ids] < flat_column_start]
+    result = stair_levels_traversal(env, stair_ids, distance=distance, replay_fraction=replay_fraction,
+                                    require_straight_progress=require_straight_progress)
+    mask = terrain.terrain_types < flat_column_start
+    levels = terrain.terrain_levels[mask]
+    generator = terrain.cfg.terrain_generator
+    heights = torch.tensor(next(iter(generator.sub_terrains.values())).step_heights, device=levels.device)
+    result.update(mean_level=levels.float().mean(),
+                  mean_step_height_cm=100 * heights[levels].mean(),
+                  at_17cm_pct=100 * (levels == generator.num_rows - 1).float().mean(),
+                  flat_environment_pct=100 * (~mask).float().mean())
+    return result
+
+
 def straight_motion_error(env, command_name: str = "base_velocity", lateral_scale: float = 2.0,
                           yaw_scale: float = 1.0):
     """Extra velocity tracking cost only for deliberate forward/backward flights.

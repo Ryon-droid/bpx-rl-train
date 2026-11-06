@@ -1,5 +1,7 @@
 > Historical guide for the original 45-D baselines. See the [project overview](../README.md) for the current 235-D teacher / 900-D blind-student workflow.
 
+> November 6, 2026: the uniform 30 Nm baseline settings described below are historical. Current code uses hip/knee peak limits of 20/40 Nm, rated 12/10 rad/s as conservative operating caps, and URDF target clipping. Existing results are preserved under their original assumptions; see the [motor specification audit](bpx-motor-spec-alignment.zh-CN.md).
+
 # MIRRORME RL Train
 
 [English](../README.md) | [简体中文](../README.zh-CN.md)

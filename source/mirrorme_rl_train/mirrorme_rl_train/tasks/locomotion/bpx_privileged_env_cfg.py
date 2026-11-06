@@ -116,7 +116,7 @@ class BPXStairs20TeacherEnvCfg(BPXStairsTeacherEnvCfg):
         self.rewards.lin_vel_z_l2.weight = -0.25
         self.rewards.leg_posture_deviation_l1.weight = -0.04
         self.rewards.action_rate_l2.weight = -0.05
-        self.scene.robot.actuators["legs"].velocity_limit_sim = 20.0
+        # Per-joint 24 V motor limits are set centrally in resources/mirrorme.py.
 
 
 @configclass

@@ -32,7 +32,8 @@ from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 from isaaclab_tasks.manager_based.locomotion.velocity import mdp
 
 from . import mdp as bpx_mdp
-from resources.mirrorme import BPX_CFG
+from resources.mirrorme import BPX_CFG, BPX_URDF_PATH
+from bpx_hardware import urdf_position_limits
 
 BASE_BODY_NAME = "torso"
 FOOT_BODY_NAMES = ("fl_toe_link", "fr_toe_link", "hl_toe_link", "hr_toe_link")
@@ -117,7 +118,8 @@ class ActionsCfg:
         scale=0.25,
         use_default_offset=True,
         preserve_order=True,
-        clip={".*": (-100.0, 100.0)},
+        # Isaac clips the processed position target AFTER scale/default offset.
+        clip=urdf_position_limits(BPX_URDF_PATH),
     )
 
 

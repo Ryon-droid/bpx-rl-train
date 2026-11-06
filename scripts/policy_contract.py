@@ -28,6 +28,12 @@ def export_basename(task: str) -> str:
 
 
 def write_export_contract(task: str, output_dir: str) -> Path:
+    import sys
+    root = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(root))
+    from bpx_hardware import hardware_contract
+    import os
+    urdf = Path(os.environ.get('MIRRORME_BPX_ASSET_ROOT', root / 'resources/BPX')) / 'bpx/urdf/bpx.urdf'
     contract = {
         "task": task,
         "input_dim": actor_input_dim(task),
@@ -43,6 +49,7 @@ def write_export_contract(task: str, output_dir: str) -> Path:
         "history_initialization": "repeat_first_frame",
         "history_reset": "clear_on_episode_reset_or_controller_restart",
         "history_input": "scaled_clipped_45d_frame",
+        "hardware_contract": hardware_contract(urdf),
     }
     target = Path(output_dir) / f"{export_basename(task)}.json"
     target.write_text(json.dumps(contract, indent=2) + "\n", encoding="utf-8")

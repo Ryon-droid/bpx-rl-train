@@ -6,6 +6,7 @@ This module deliberately imports no Isaac Sim/Lab packages.
 from __future__ import annotations
 
 import os
+import sys
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
@@ -14,6 +15,8 @@ import numpy as np
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT))
+from bpx_hardware import joint_values, hardware_contract
 # Keep this order aligned with bpx_flat_env_cfg.JOINT_NAMES, never MJCF traversal order.
 JOINT_NAMES = tuple(
     f"{leg}_{joint}_joint"
@@ -24,7 +27,9 @@ DEFAULT_JOINT_POS = np.array([0.0] * 4 + [0.8] * 4 + [-1.5] * 4)
 CONTROL_DECIMATION = 4
 ACTION_SCALE = 0.25
 ACTION_CLIP = 100.0
-KP, KD, TORQUE_LIMIT = 30.0, 1.0, 30.0
+KP, KD = 30.0, 1.0
+TORQUE_LIMIT = np.array(joint_values('peak_torque_nm'))
+SPEED_LIMIT = np.array(joint_values('rated_speed_rad_s'))
 
 
 def numbers(values):
@@ -127,8 +132,9 @@ def scene_xml(urdf_path=None, friction=1.0):
 
     add_link("torso", world)
     for joint_name in JOINT_NAMES:
+        effort = TORQUE_LIMIT[JOINT_NAMES.index(joint_name)]
         ET.SubElement(actuators, "motor", name=f"motor_{joint_name}", joint=joint_name,
-                      gear="1", ctrllimited="true", ctrlrange="-30 30")
+                      gear="1", ctrllimited="true", ctrlrange=numbers([-effort, effort]))
     ET.indent(scene)
     return ET.tostring(scene, encoding="unicode")
 
@@ -143,6 +149,9 @@ class BPXSimulation:
             raise ValueError("BPX requires one free base and 12 named hinge joints/motors")
         self.qpos_ids = self.model.jnt_qposadr[ids]
         self.qvel_ids = self.model.jnt_dofadr[ids]
+        self.position_limits = self.model.jnt_range[ids].copy()
+        self.hardware_contract = hardware_contract(urdf_path or Path(os.environ.get(
+            'MIRRORME_BPX_ASSET_ROOT', PROJECT_ROOT / 'resources/BPX')) / 'bpx/urdf/bpx.urdf')
         self.base_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "torso")
         self.ground_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, "ground")
         self.action = np.zeros(12)
@@ -191,12 +200,13 @@ class BPXSimulation:
         if action.shape != (12,) or not np.isfinite(action).all():
             raise ValueError("Policy output must be 12 finite actions")
         self.action = np.clip(action, -ACTION_CLIP, ACTION_CLIP)
-        self.target = DEFAULT_JOINT_POS + ACTION_SCALE * self.action
+        self.target = np.clip(DEFAULT_JOINT_POS + ACTION_SCALE * self.action,
+                              self.position_limits[:, 0], self.position_limits[:, 1])
         peak_torque = 0.0
         # Hold position targets for 20 ms; recompute saturated PD torque every 5 ms.
         for _ in range(CONTROL_DECIMATION):
             torque = KP * (self.target - self.data.qpos[self.qpos_ids]) - KD * self.data.qvel[self.qvel_ids]
-            self.data.ctrl[:] = np.clip(torque, -TORQUE_LIMIT, TORQUE_LIMIT)
+            self.data.ctrl[:] = self.clip_motor_torque(torque, self.data.qvel[self.qvel_ids])
             peak_torque = max(peak_torque, float(np.abs(self.data.ctrl).max()))
             mujoco.mj_step(self.model, self.data)
         # Refresh body poses and velocities at the completed integration time.
@@ -207,6 +217,15 @@ class BPXSimulation:
                 or any(self.data.warning[warning].number for warning in bad_states)):
             raise RuntimeError("MuJoCo reported an unstable/non-finite simulation state")
         return peak_torque
+
+    @staticmethod
+    def clip_motor_torque(torque, velocity):
+        result = np.clip(torque, -TORQUE_LIMIT, TORQUE_LIMIT)
+        # MuJoCo has no native hard joint-velocity cap. Disable further drive
+        # beyond rated operating speed; retain braking. External overspeed is
+        # possible and must be reported, never hidden by clamping state/qvel.
+        overspeed_drive = (np.abs(velocity) >= SPEED_LIMIT) & (result * velocity > 0)
+        return np.where(overspeed_drive, 0., result)
 
     def push(self, velocity_xy):
         # Free-joint translation velocities are world-frame, matching Isaac's XY kick.

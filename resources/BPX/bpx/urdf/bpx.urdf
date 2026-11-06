@@ -370,21 +370,21 @@
     <child link="fl_hip_link" />
     <origin xyz="0.2386 0.056 0" rpy="0 0 0" />
     <axis xyz="1 0 0" />
-    <limit lower="-0.8727" upper="0.8727" effort="30" velocity="20" />
+    <limit lower="-0.8727" upper="0.8727" effort="20" velocity="12" />
   </joint>
   <joint name="fl_hip_pitch_joint" type="revolute">
     <parent link="fl_hip_link" />
     <child link="fl_thigh_link" />
     <origin xyz="0 0.11522 0" rpy="0 0 0" />
     <axis xyz="0 1 0" />
-    <limit lower="-0.7854" upper="2.60661" effort="30" velocity="20" />
+    <limit lower="-0.7854" upper="2.60661" effort="20" velocity="12" />
   </joint>
   <joint name="fl_knee_joint" type="revolute">
     <parent link="fl_thigh_link" />
     <child link="fl_calf_link" />
     <origin xyz="0 0 -0.23" rpy="0 0 0" />
     <axis xyz="0 1 0" />
-    <limit lower="-2.7531" upper="-0.5539" effort="30" velocity="20" />
+    <limit lower="-2.7531" upper="-0.5539" effort="40" velocity="10" />
   </joint>
   <joint name="fl_ankle_joint" type="fixed" dont_collapse="true">
     <parent link="fl_calf_link" />
@@ -396,21 +396,21 @@
     <child link="fr_hip_link" />
     <origin xyz="0.2386 -0.056 0" rpy="0 0 0" />
     <axis xyz="1 0 0" />
-    <limit lower="-0.8727" upper="0.8727" effort="30" velocity="20" />
+    <limit lower="-0.8727" upper="0.8727" effort="20" velocity="12" />
   </joint>
   <joint name="fr_hip_pitch_joint" type="revolute">
     <parent link="fr_hip_link" />
     <child link="fr_thigh_link" />
     <origin xyz="0 -0.11522 0" rpy="0 0 0" />
     <axis xyz="0 1 0" />
-    <limit lower="-0.7854" upper="2.60661" effort="30" velocity="20" />
+    <limit lower="-0.7854" upper="2.60661" effort="20" velocity="12" />
   </joint>
   <joint name="fr_knee_joint" type="revolute">
     <parent link="fr_thigh_link" />
     <child link="fr_calf_link" />
     <origin xyz="0 0 -0.23" rpy="0 0 0" />
     <axis xyz="0 1 0" />
-    <limit lower="-2.7531" upper="-0.5539" effort="30" velocity="20" />
+    <limit lower="-2.7531" upper="-0.5539" effort="40" velocity="10" />
   </joint>
   <joint name="fr_ankle_joint" type="fixed" dont_collapse="true">
     <parent link="fr_calf_link" />
@@ -422,21 +422,21 @@
     <child link="hl_hip_link" />
     <origin xyz="-0.2386 0.056 0" rpy="0 0 0" />
     <axis xyz="1 0 0" />
-    <limit lower="-0.8727" upper="0.8727" effort="30" velocity="20" />
+    <limit lower="-0.8727" upper="0.8727" effort="20" velocity="12" />
   </joint>
   <joint name="hl_hip_pitch_joint" type="revolute">
     <parent link="hl_hip_link" />
     <child link="hl_thigh_link" />
     <origin xyz="0 0.11522 0" rpy="0 0 0" />
     <axis xyz="0 1 0" />
-    <limit lower="-0.7854" upper="2.60661" effort="30" velocity="20" />
+    <limit lower="-0.7854" upper="2.60661" effort="20" velocity="12" />
   </joint>
   <joint name="hl_knee_joint" type="revolute">
     <parent link="hl_thigh_link" />
     <child link="hl_calf_link" />
     <origin xyz="0 0 -0.23" rpy="0 0 0" />
     <axis xyz="0 1 0" />
-    <limit lower="-2.7531" upper="-0.5539" effort="30" velocity="20" />
+    <limit lower="-2.7531" upper="-0.5539" effort="40" velocity="10" />
   </joint>
   <joint name="hl_ankle_joint" type="fixed" dont_collapse="true">
     <parent link="hl_calf_link" />
@@ -448,21 +448,21 @@
     <child link="hr_hip_link" />
     <origin xyz="-0.2386 -0.056 0" rpy="0 0 0" />
     <axis xyz="1 0 0" />
-    <limit lower="-0.8727" upper="0.8727" effort="30" velocity="20" />
+    <limit lower="-0.8727" upper="0.8727" effort="20" velocity="12" />
   </joint>
   <joint name="hr_hip_pitch_joint" type="revolute">
     <parent link="hr_hip_link" />
     <child link="hr_thigh_link" />
     <origin xyz="0 -0.11522 0" rpy="0 0 0" />
     <axis xyz="0 1 0" />
-    <limit lower="-0.7854" upper="2.60661" effort="30" velocity="20" />
+    <limit lower="-0.7854" upper="2.60661" effort="20" velocity="12" />
   </joint>
   <joint name="hr_knee_joint" type="revolute">
     <parent link="hr_thigh_link" />
     <child link="hr_calf_link" />
     <origin xyz="0 0 -0.23" rpy="0 0 0" />
     <axis xyz="0 1 0" />
-    <limit lower="-2.7531" upper="-0.5539" effort="30" velocity="20" />
+    <limit lower="-2.7531" upper="-0.5539" effort="40" velocity="10" />
   </joint>
   <joint name="hr_ankle_joint" type="fixed" dont_collapse="true">
     <parent link="hr_calf_link" />

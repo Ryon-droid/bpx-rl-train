@@ -2,6 +2,7 @@
 """Train BPX with PPO or distill a privileged teacher into a blind student."""
 
 import argparse
+import json
 import os
 import sys
 import time
@@ -123,6 +124,11 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
 
     dump_yaml(os.path.join(log_dir, "params", "env.yaml"), env_cfg)
     dump_yaml(os.path.join(log_dir, "params", "agent.yaml"), agent_cfg)
+    from bpx_hardware import hardware_contract
+    from resources.mirrorme import BPX_URDF_PATH
+    with open(os.path.join(log_dir, 'params', 'hardware_contract.json'), 'w') as stream:
+        json.dump(hardware_contract(BPX_URDF_PATH), stream, indent=2)
+        stream.write('\n')
     start = time.time()
     runner.learn(num_learning_iterations=agent_cfg.max_iterations, init_at_random_ep_len=True)
     print(f"[INFO] Training time: {time.time() - start:.1f} s")

@@ -55,6 +55,8 @@ def main() -> None:
 
         generator = cfg.scene.terrain.terrain_generator
         for terrain in generator.sub_terrains.values():
+            if not hasattr(terrain, 'step_height_range'):
+                continue  # Mixed repair tasks also contain flat tiles.
             for row in range(generator.num_rows):
                 difficulty = (row + 0.5) / generator.num_rows
                 meshes, _ = terrain.function(difficulty, terrain.replace(size=generator.size))
@@ -72,6 +74,22 @@ def main() -> None:
     action_dim = env.unwrapped.action_manager.total_action_dim
     actual_joint_names = tuple(env.unwrapped.scene["robot"].joint_names)
     missing = [name for name in JOINT_NAMES if name not in actual_joint_names]
+    from bpx_hardware import joint_values, urdf_position_limits, PROFILE
+    from resources.mirrorme import BPX_URDF_PATH
+    robot = env.unwrapped.scene['robot']
+    ids = [actual_joint_names.index(name) for name in JOINT_NAMES]
+    expected_effort = torch.tensor(joint_values('peak_torque_nm'), device=robot.device)
+    expected_velocity = torch.tensor(joint_values('rated_speed_rad_s'), device=robot.device)
+    expected_angles = torch.tensor(list(urdf_position_limits(BPX_URDF_PATH).values()), device=robot.device)
+    torch.testing.assert_close(robot.data.joint_effort_limits[0, ids], expected_effort)
+    torch.testing.assert_close(robot.data.joint_vel_limits[0, ids], expected_velocity)
+    torch.testing.assert_close(robot.data.joint_pos_limits[0, ids], expected_angles)
+    term = env.unwrapped.action_manager.get_term('joint_position')
+    term.process_actions(torch.full((1, 12), 100., device=robot.device))
+    torch.testing.assert_close(term.processed_actions[0], expected_angles[:, 1])
+    term.process_actions(torch.full((1, 12), -100., device=robot.device))
+    torch.testing.assert_close(term.processed_actions[0], expected_angles[:, 0])
+    print(f'[PASS] {PROFILE}: actual solver efforts, speeds, URDF angles and processed target clipping verified.')
 
     print(f"policy observation shape: {tuple(policy_obs.shape)}")
     print(f"privileged observation shape: {tuple(privileged_obs.shape)}")

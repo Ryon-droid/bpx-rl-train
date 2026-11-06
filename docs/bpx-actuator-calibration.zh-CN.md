@@ -8,8 +8,8 @@
 
 | 项目 | 当前仓库设置 | 如何理解 |
 |---|---|---|
-| 执行器 | `ImplicitActuatorCfg`，固定仿真力矩上限 `30 Nm` | 没有配置实测的随转速变化力矩包络 |
-| URDF 限制 | `effort=30`、`velocity=20` | 单位分别为关节侧 Nm 和 rad/s；文件标称值不等于实测能力曲线 |
+| 执行器 | `ImplicitActuatorCfg`，髋/膝峰值上限 `20/40 N·m` | 依据 24 V 产品规格；无热模型或实测扭矩—转速包络 |
+| URDF / 仿真限制 | 髋 `effort=20, velocity=12`，膝 `effort=40, velocity=10` | 角度保持厂商 URDF；额定转速用作保守运行上限，不是最高转速 |
 | PD / armature | `30 / 1 / 0.003` | 当前仿真参数，需要与实机控制模式和响应比较 |
 | 默认姿态 | hip roll `0`、hip pitch `0.8`、knee `-1.5 rad` | 默认关节位置也用于动作偏置和姿态奖励 |
 | 初始机身 Z | `0.48 m` | 是初始化位置，不代表接触稳定后的实际站高 |
@@ -18,7 +18,7 @@
 
 代码位置：[执行器与默认姿态](../resources/mirrorme.py)、[平地配置](../source/mirrorme_rl_train/mirrorme_rl_train/tasks/locomotion/bpx_flat_env_cfg.py)、[多地形配置](../source/mirrorme_rl_train/mirrorme_rl_train/tasks/locomotion/bpx_rough_env_cfg.py)。
 
-本文是标定和后续实现计划。本次没有修改上述训练参数，也没有生成未经实测的力矩—转速曲线；`pretrained/` 中的历史模型和配置快照保持原样。
+本文为标定计划；2026-11-06 已按[电机规格核对](bpx-motor-spec-alignment.zh-CN.md)更正分关节扭矩/速度及位置目标限幅，仍未生成未经实测的力矩—转速曲线；`pretrained/` 中的历史模型和配置快照保持原样。
 
 ## 2. 优先测关节输出侧力矩—转速曲线
 

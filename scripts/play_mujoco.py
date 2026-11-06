@@ -247,7 +247,9 @@ def run(args):
                                            for row in rows if row[field] is not None) / samples) if samples else None
         metadata = dict(engine="mujoco", version=mujoco.__version__, device="cpu",
                         policy=str(args.policy.resolve()), urdf=str(args.urdf.resolve()) if args.urdf else "default BPX URDF",
-                        friction=args.friction, kp=KP, kd=KD, torque_limit_nm=TORQUE_LIMIT,
+                        friction=args.friction, kp=KP, kd=KD, torque_limit_nm=TORQUE_LIMIT.tolist(),
+                        hardware_contract=sim.hardware_contract,
+                        speed_limit_model='drive cutoff at rated speed; braking preserved, external overspeed possible',
                         physics_dt=sim.model.opt.timestep, control_dt=dt, seed=args.seed,
                         warmup_s=args.warmup_s, push_interval_s=args.push_interval_s,
                         push_velocity_m_s=args.push_velocity, eval=args.eval,
